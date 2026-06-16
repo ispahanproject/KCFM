@@ -3,4 +3,5 @@
 
 # 公開対象のみ許可
 !KCFM問題集.html
+!index.html
 !.gitignore
