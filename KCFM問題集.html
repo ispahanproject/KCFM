@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0b1220">
+<title>KCFM ◯✖問題集</title>
+<style>
+:root{
+  --bg:#0b1220; --bg2:#121b2e; --card:#16213a; --card2:#1d2b46;
+  --tx:#e9eefb; --tx2:#9fb0d0; --tx3:#6f81a6;
+  --line:#27375a; --accent:#4f8cff; --accent2:#3a6fd8;
+  --ok:#22c98a; --okbg:rgba(34,201,138,.14); --ng:#ff5d6c; --ngbg:rgba(255,93,108,.14);
+  --warn:#ffd24a;
+}
+@media (prefers-color-scheme: light){
+  :root{
+    --bg:#eef2f9; --bg2:#e3e9f4; --card:#ffffff; --card2:#f3f6fc;
+    --tx:#13203a; --tx2:#475571; --tx3:#7c89a3;
+    --line:#dbe2ef; --accent:#2f6bff; --accent2:#2257e0;
+    --ok:#0fae73; --okbg:rgba(15,174,115,.12); --ng:#e23a4d; --ngbg:rgba(226,58,77,.10);
+    --warn:#c98a00;
+  }
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--tx);
+  font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;line-height:1.6}
+#app{max-width:680px;margin:0 auto;min-height:100vh;
+  padding:max(14px,env(safe-area-inset-top)) 14px calc(28px + env(safe-area-inset-bottom))}
+button{font-family:inherit;cursor:pointer;border:none}
+.muted{color:var(--tx2)}
+.tiny{font-size:12px}
+
+/* ---- Home ---- */
+.hero{padding:22px 4px 6px}
+.hero h1{font-size:22px;margin:0 0 4px;letter-spacing:.02em}
+.hero p{margin:0;color:var(--tx2);font-size:13px}
+.section-label{font-size:12px;color:var(--tx3);margin:22px 4px 9px;letter-spacing:.08em;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.setcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px 15px 13px;
+  text-align:left;color:var(--tx);transition:transform .08s,border-color .15s;display:block}
+.setcard:active{transform:scale(.975)}
+.setcard.full{grid-column:1 / -1}
+.setcard .nm{font-size:19px;font-weight:800;display:flex;align-items:center;gap:9px}
+.setcard .nm .q{font-size:12px;font-weight:600;color:var(--tx3)}
+.bar{height:7px;border-radius:99px;background:var(--bg2);overflow:hidden;margin:11px 0 7px}
+.bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--ok));border-radius:99px}
+.setcard .meta{display:flex;justify-content:space-between;font-size:12px;color:var(--tx2)}
+.row{display:flex;gap:10px}
+.toggle{flex:1;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px 8px;
+  color:var(--tx2);font-size:13px;font-weight:700;text-align:center;transition:.12s}
+.toggle.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.seg{display:flex;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px;gap:4px}
+.seg button{flex:1;background:transparent;color:var(--tx2);border-radius:10px;padding:10px 6px;font-size:13.5px;font-weight:700}
+.seg button.on{background:var(--accent);color:#fff}
+.bigbtn{width:100%;background:var(--accent);color:#fff;border-radius:14px;padding:15px;font-size:16px;font-weight:800;
+  margin-top:12px;transition:transform .08s}
+.bigbtn:active{transform:scale(.985)}
+.bigbtn.ghost{background:var(--card);color:var(--tx);border:1px solid var(--line)}
+.bigbtn.warn{background:var(--card);color:var(--ng);border:1px solid var(--line)}
+.bigbtn:disabled{opacity:.4}
+.note{font-size:12px;color:var(--tx3);margin:16px 4px 0;line-height:1.7}
+
+/* ---- Quiz top bar ---- */
+.top{display:flex;align-items:center;gap:10px;padding:4px 2px 12px}
+.iconbtn{background:var(--card);border:1px solid var(--line);border-radius:11px;color:var(--tx2);
+  width:42px;height:42px;font-size:17px;flex:none;display:flex;align-items:center;justify-content:center}
+.topmid{flex:1}
+.topmid .t1{font-size:13px;font-weight:800;letter-spacing:.04em}
+.topmid .t2{font-size:11.5px;color:var(--tx3)}
+.scorepill{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:7px 11px;font-size:12px;font-weight:800}
+.pbar{height:6px;border-radius:99px;background:var(--card);overflow:hidden;margin:0 2px 16px}
+.pbar>i{display:block;height:100%;background:var(--accent);transition:width .25s}
+
+/* ---- Card ---- */
+.badge{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:800;color:var(--tx3);margin:2px 0 10px}
+.badge .pill{background:var(--card2);border:1px solid var(--line);color:var(--tx2);border-radius:8px;padding:3px 8px;letter-spacing:.03em}
+.badge .typ{color:var(--accent)}
+.stem{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);
+  border-radius:12px;padding:13px 14px;font-size:14.5px;color:var(--tx);margin-bottom:14px}
+.stem .lab{font-size:11px;font-weight:800;color:var(--tx3);display:block;margin-bottom:4px;letter-spacing:.1em}
+.statement{font-size:19px;font-weight:700;line-height:1.62;margin:6px 2px 20px}
+.statement .onum{display:inline-block;color:var(--accent);font-weight:900;margin-right:6px}
+
+/* maru buttons */
+.maru{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.maru button{padding:20px 8px;border-radius:18px;font-size:18px;font-weight:800;border:2px solid var(--line);
+  background:var(--card);color:var(--tx);transition:transform .08s}
+.maru button .big{display:block;font-size:30px;line-height:1.1;margin-bottom:2px}
+.maru button:active{transform:scale(.96)}
+.maru button:disabled{cursor:default}
+.maru button:disabled:active{transform:none}
+.maru button.pickO{border-color:var(--ok)}
+.maru button.pickX{border-color:var(--ng)}
+
+/* options (question mode) */
+.opts{display:flex;flex-direction:column;gap:10px;margin-bottom:6px}
+.opt{display:flex;gap:11px;align-items:flex-start;background:var(--card);border:2px solid var(--line);
+  border-radius:14px;padding:13px 13px;color:var(--tx);text-align:left;font-size:15px;line-height:1.55}
+.opt .on{flex:none;width:25px;height:25px;border-radius:50%;border:2px solid var(--tx3);color:var(--tx3);
+  font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.opt.sel{border-color:var(--accent)}
+.opt.sel .on{border-color:var(--accent);color:#fff;background:var(--accent)}
+.opt.correct{border-color:var(--ok);background:var(--okbg)}
+.opt.wrong{border-color:var(--ng);background:var(--ngbg)}
+.opt .res{margin-left:auto;font-weight:900;font-size:16px;flex:none;padding-left:6px}
+
+/* feedback */
+.fb{border-radius:14px;padding:13px 14px;margin-top:16px;border:1px solid var(--line)}
+.fb.ok{background:var(--okbg);border-color:var(--ok)}
+.fb.ng{background:var(--ngbg);border-color:var(--ng)}
+.fb .hd{font-weight:900;font-size:15px;margin-bottom:3px;display:flex;align-items:center;gap:8px}
+.fb.ok .hd{color:var(--ok)} .fb.ng .hd{color:var(--ng)}
+.fb .ans{font-size:13px;color:var(--tx2)}
+.expl{margin-top:11px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 13px}
+.expl .lab{font-size:11px;font-weight:800;color:var(--accent);letter-spacing:.08em;display:block;margin-bottom:5px}
+.expl .body{font-size:13.5px;color:var(--tx);white-space:pre-wrap;line-height:1.7}
+.expl .qn{font-size:12.5px;color:var(--tx2);margin-top:9px;padding-top:9px;border-top:1px dashed var(--line);white-space:pre-wrap}
+
+.footer{position:sticky;bottom:0;padding:12px 0 calc(8px + env(safe-area-inset-bottom));
+  background:var(--bg);border-top:1px solid var(--line);box-shadow:0 -10px 18px -8px var(--bg);margin-top:18px}
+.hint{font-size:12px;color:var(--tx3);background:var(--card);border:1px dashed var(--line);
+  border-radius:10px;padding:9px 11px;margin:2px 0 6px;line-height:1.6}
+.next{width:100%;background:var(--accent);color:#fff;border-radius:14px;padding:16px;font-size:16px;font-weight:800}
+.next:active{transform:scale(.99)}
+.check{width:100%;background:var(--card2);color:var(--tx);border:1px solid var(--line);border-radius:14px;padding:16px;font-size:16px;font-weight:800}
+.check:disabled{opacity:.45}
+
+/* summary */
+.sumc{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px 18px;text-align:center;margin-top:18px}
+.sumc .pc{font-size:46px;font-weight:900;letter-spacing:.02em}
+.sumc .sub{color:var(--tx2);font-size:14px;margin-top:4px}
+.statline{display:flex;justify-content:center;gap:22px;margin-top:16px;font-size:13px}
+.statline b{display:block;font-size:22px}
+.fadein{animation:fi .22s ease both}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<noscript><div style="padding:22px;font-family:-apple-system,sans-serif;color:#13203a;background:#fff">
+<b>このアプリはJavaScriptで動きます。</b><br><br>
+今は画面が真っ白／文字だけに見えているはずです。メールやLINEの「プレビュー」ではJavaScriptが無効になるためです。<br><br>
+次のどちらかで開いてください：<br>
+① このファイルを「ファイル」アプリ（iCloud Drive等）に保存し、ファイルアプリ内でタップする<br>
+② Safari / Chrome で開く<br>
+</div></noscript>
+<div id="app"></div>
+<script>const DATA = [{"set":"W","num":1,"id":"W1","stem":"運航管理および運航基準に関する記述について、正しいものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"飛行前の飛行計画の必要燃料にStandard Extra Fuelは含まれるが、Extra Fuelは含まれない","correct":false,"explain":"OM 3.2.4.2 Standard Extra Fuel、Extra Fuelの搭載が必要と判断した場合には必要燃料に含める"},{"n":2,"text":"Standard Extra Fuelの算出結果と実際の状況が異なると思われる場合、運航管理者と協議した上で、目的地での残存燃料がMDFを下回らないと判断されれば、その量を減ずることができる","correct":true,"explain":"Part.1 SD 3.2.1.2.1"},{"n":3,"text":"目的地の混雑からApproachの指示でHolding中に、着陸時の残存燃料がMDFを下回る可能性が明白になった場合は、規定により代替飛行場へDⅳersionを開始する","correct":false,"explain":"OMS 3.2.4.3.1『ただし、TOD以降…』\nただし，Top Of Descent以降，状況変化により目的地での残存燃料がMinimum Diversion Fuelを下回ることが予想される場合は，上記に関わらず，目的地への飛行継続を含め状況により適切な対応をとること。"},{"n":4,"text":"代替空港を選定したFlightで着陸後の残存燃料がMDFを切った場合、機長報告を実施する","correct":true,"explain":""}]},{"set":"W","num":2,"id":"W2","stem":"OJT中にHND、ITM、ICN(仁川)、HKG(香港)の空港を経験し、昇格路線審査をHND-ITMで受ける場合の乗務要件について、正しいものを全て選べ","type":"multi","qnote":"QM 6.3.2エリア要件　3.「エリア審査合格後に乗務可能な空港」","options":[{"n":1,"text":"機長昇格訓練中の離着陸経験は機長昇格後も一定期間は所定の経験として扱われる","correct":true,"explain":""},{"n":2,"text":"半年以内にF/OとしてのSPKの着陸経験があっても、HND—SPKはいきなりPICとして乗務することは出来ない","correct":true,"explain":""},{"n":3,"text":"昇格後すぐHNDーHKGにPICとして乗務できる","correct":false,"explain":""},{"n":4,"text":"昇格後すぐHNDーICNにPICとして乗務できる","correct":true,"explain":""}]},{"set":"W","num":3,"id":"W3","stem":"機長認定において有することが求められる、航空機の機長として必要な国土交通省令で定める知識及び能力について、正しいものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"通常状態及び異常状態における航空機の操作及び措置","correct":true,"explain":""},{"n":2,"text":"航空機乗組員及び客室乗務員に対する指導、育成","correct":false,"explain":""},{"n":3,"text":"航空機の出発及び飛行計画の変更に係る運航管理者の承認","correct":true,"explain":""},{"n":4,"text":"航空機乗組員及び客室乗務員に対する指揮監督","correct":true,"explain":""}]},{"set":"W","num":4,"id":"W4","stem":"各審査の定義について、正しいものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"国土交通大臣は、必要があると認めるときは、法第72条第1項の認定を受けた者が同項の知識及び能力を有するかどうかを臨時に審査をしなければならない。","correct":true,"explain":""},{"n":2,"text":"特別審査とは、国土交通大臣が必要と認めた時に、指定本邦航空運送事業者が審査をすべき者について運航審査官によって行われる定期審査および臨時審査である。","correct":true,"explain":""},{"n":3,"text":"随時審査とは、特別審査が実施される場合に事業者によって実施される審査であり、当該審査の前、または同時に実施される。","correct":true,"explain":""},{"n":4,"text":"運航審査部長、運航訓練部長または機種別運航乗員部長が特に必要であると認めた場合も随時審査は実施される。機長昇格後半年後の技量定着確認の実施がこれに当たる。","correct":true,"explain":""}]},{"set":"W","num":5,"id":"W5","stem":"航空法における機長の権限に該当するものについて、正しいものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"当該出発便を担当するオペレーションオフィサーもしくはオペレーションアシスタントの指揮監督をすること","correct":false,"explain":""},{"n":2,"text":"当該便飛行中、安全阻害行為等をする旅客を拘束する場合で、最寄りの旅客に対する援助命令をすること","correct":false,"explain":""},{"n":3,"text":"安全阻害行為等のうち、特に禁止すべき行為として国土交通省令で定めるものをした旅客に対し、当該行為を反復し、又は継続してはならない旨の命令をすること","correct":true,"explain":""},{"n":4,"text":"当該航空機および旅客の危難が生じた場合のEVAC COMMANDによる避難命令","correct":true,"explain":""}]},{"set":"W","num":6,"id":"W6","stem":"航空法の規定に加えて、OMで要求されるPICの出発前の確認項目について、正しいものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"全てのドアの閉鎖","correct":true,"explain":""},{"n":2,"text":"搭乗旅客数","correct":true,"explain":""},{"n":3,"text":"条件付き運送旅客数","correct":false,"explain":"条件付き運送旅客数は確認内容にない(前旅客の着席は確認)\n搭乗旅客数。"},{"n":4,"text":"必要な書類の搭載","correct":true,"explain":"飛行に必要な書類の搭載。"}]},{"set":"W","num":7,"id":"W7","stem":"安全阻害行為のうち、カテゴリーⅢに含まれるものについて、正しいものを全て選べ","type":"multi","qnote":"注）特に，使用するRMのCharts類は，最新で有効なものであることを運航乗務員間で相互に確認する。","options":[{"n":1,"text":"座席や通路での喫煙","correct":true,"explain":"すべてのドアの閉鎖。"},{"n":2,"text":"泥酔して大騒ぎする","correct":true,"explain":"全旅客が着席していること（化粧室等に旅客が存在していないこ"},{"n":3,"text":"「殺すぞ」と怒鳴る","correct":false,"explain":"CAT1"},{"n":4,"text":"非常脱出の妨げになる場所へ手荷物を放置する","correct":false,"explain":"CAT2"}]},{"set":"W","num":8,"id":"W8","stem":"安全阻害行為に関する機長の権限について、正しいものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"安全阻害行為等を行った者を拘束出来るのは、搭乗開始から到着後ドアを開くまでの間である","correct":false,"explain":"乗降口クローズからオープンまでの間。貨物室ドアは関係ない"},{"n":2,"text":"両手を拘束したまま着陸することは出来ない","correct":false,"explain":"両足の拘束はダメ"},{"n":3,"text":"機内の通路で喫煙する者が居た場合は直ちに命令書を発行することが出来る","correct":false,"explain":"化粧室内での喫煙＆悪質、常習性のある場合に1回目の注意を省略して命令書の発行が可能"},{"n":4,"text":"命令書の発行には機長の署名が必要である","correct":false,"explain":"事前の了解が必要だが、サインは不要"}]},{"set":"W","num":9,"id":"W9","stem":"禁止命令対象行為に該当するものについて、正しいものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"乗降口または非常ロの扉の開閉装置を正当な理由なく操作すること","correct":true,"explain":""},{"n":2,"text":"禁煙場所で喫煙すること","correct":false,"explain":"化粧室内での喫煙"},{"n":3,"text":"乗務員の職務を妨害し、安全の保持等に支障を及ぼすおそれがあるもの","correct":true,"explain":""},{"n":4,"text":"告示で禁止された電子機器を正当な理由なく使用すること","correct":true,"explain":""}]},{"set":"W","num":10,"id":"W10","stem":"警告書について、正しいものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"禁止命令対象行為に該当する場合は使用できない。","correct":false,"explain":""},{"n":2,"text":"「警告書」の手交がなくても、機内での拘束、警察要請は可能である。","correct":true,"explain":""},{"n":3,"text":"原則、PICへ報告し手交する。(事後報告でも可。)","correct":true,"explain":""},{"n":4,"text":"例え事態を悪化させる可能性があっても、必ず対象旅客、周りの旅客へ聞こえるよう、はっきりとその行為をやめるよう読み上げ手交しなければならない。","correct":false,"explain":""}]},{"set":"W","num":11,"id":"W11","stem":"安全阻害行為について、正しいものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"安全阻害行為等とは、当該航空機の安全を害し、当該航空機内にあるその者以外の者若しくは財産に危害を及ぼし、当該航空機内の秩序を乱し、又は当該航空機内の規律に違反する行為をいう","correct":true,"explain":""},{"n":2,"text":"航空機内にある者は、機長の命令又は承認に基づき、機長が法73条の4第1項の措置をとることに対し必要な援助を行うことができる","correct":false,"explain":"要請又は承認"},{"n":3,"text":"機長は、航空機を着陸させる場合において、法73条の4第1項の規定に基づき拘束している者があるとき、又は同項の規定に基づき降機させようとする者があるときは、できる限り着陸前に、拘束又は降機の理由を示してその旨を着陸地の最寄りの航空交通管制機関に連絡しなければならない","correct":true,"explain":""},{"n":4,"text":"機長は、法73条の4第1項の規定に基づき拘束している場合において、航空機を着陸させたときは、その者を引き続き拘束したまま当該航空機を離陸させてはならない","correct":false,"explain":"「拘束されている者が拘束されたまま引き続き搭乗することに同意する場合及びその者を降機させないことについてやむを得ない事由がある場合」には引き続き拘束したまま再度、離陸可能。"}]},{"set":"W","num":12,"id":"W12","stem":"Hijackに関する事項について、正しいものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"緊急事態を宣言し、残燃料を確認し、操縦室ドアのDead Boltを施錠する。","correct":true,"explain":"Dead Boltの施錠は緊急着陸後の措置として書かれている。FLT中は施錠を確認。←❌だと思うけど、答えは⭕️。"},{"n":2,"text":"脅威レベルLevel.4とは生命の危機にさらされるもののことである。","correct":false,"explain":"LVL4：操縦室への侵入またはその試み"},{"n":3,"text":"着陸後は緊急脱出に備え、Flap UP、Spoiler Retractとする。","correct":false,"explain":"Flap down"},{"n":4,"text":"以後、整備措置が無ければ離陸出来ないように、ENG Fire Switchを引いて、IDGをDisconnectする。","correct":true,"explain":""}]},{"set":"W","num":13,"id":"W13","stem":"運航管理者の承認を受ける方法について、正しいものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"運航管理者は天王洲本社ビルのみに一極配置されており、就航飛行場にはオペレーションコーディネーターが配置されている。","correct":false,"explain":"0M 3.1.2天王洲および大阪国際空港に配置"},{"n":2,"text":"飛行中、代替飛行場を急遽変更する必要がある場合には、その後可及的速やかに通知する。","correct":true,"explain":"OM 3.1.3.3 Clearanceの変更"},{"n":3,"text":"目的地の気象状態がBelowとなったので、En Routeから代替飛行場へ直行したが、時間的猶予はあったものの到着後に事後承認をもらった","correct":false,"explain":"OM 3.1.3.3 Clearanceの変更\n速やかに報告\n飛行中においては，状況によりPICの判断で飛行計画を変更することができる。この場合PICは，目的地，代替飛行場，または大幅な経路の変更等，その変更が運航管理者の行うFlight Watch業務に影響を及ぼすと判断する場合には，その旨可及的速やかに運航管理者に通報する。運航管理者は，必要に応じて，変更された飛行計画について助言を行う。"},{"n":4,"text":"飛行中の飛行経路の大幅な変更はいかなる場合も、事前承認なしにはできない。","correct":false,"explain":"OM 3.1.3.3 Clearanceの変更"}]},{"set":"W","num":14,"id":"W14","stem":"整備について、正しいものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"搭載用航空日誌にある確認主任者の署名は、法確認の証である","correct":true,"explain":""},{"n":2,"text":"OMSでその他の飛行場として定める空港には、当該型式確認主任者は配置されていない","correct":true,"explain":""},{"n":3,"text":"OMSで定める当該航空機の正規飛行場以外へのDⅳersion後、再出発に際してMELを適用する場合、いかなる場合も当該型式確認主任者による整備処置が必要である","correct":false,"explain":"Part.1 RD 9.13.1.1 Divert時の整備処置"},{"n":4,"text":"日本航空の定期整備区分にはA,J,C,K,Mがあるが、型式によっては全区分の定期整備が行われるわけではない","correct":true,"explain":"←種類的には、S,A,J,C,K,M,Tがあるので❌かと思ったけど、答えは⭕️。問いが定期整備だからかも。"}]},{"set":"W","num":15,"id":"W15","stem":"Observe Seat使用者の取り扱いについて、正しいものを全て選べ","type":"multi","qnote":"OMS 9.4.1","options":[{"n":1,"text":"運航乗務員の出頭時刻までに航務担当セクション(HND,NRTにおいては乗員サポート部スケジュール運用担当カウンター)に出頭し,飛行前ブリーフィングに参加する。参加できない場合,航務担当セクションを通じ操縦室立ち入りに関しPICの了承を得る。","correct":true,"explain":""},{"n":2,"text":"客室内に座席を確保する場合(「AS PAX」)、座席を確保しない場合(「AS CREW」)、いずれの場合もWeight&Balance、Load Message、Meal Service等は乗員扱いとする。","correct":false,"explain":"AS CREW：乗員扱い、　AS PAX：旅客扱い"},{"n":3,"text":"操縦室立ち入りにあたっては、運航乗務員,客室乗務員および地上運航従事者のうち、それぞれ1名以上の者が,Observer Seat使用者の身元を写真付身分証明書および操縦室立入り許可書により確認する。","correct":false,"explain":"OM 9.4.1それぞれ1名以上　→のうち複数の者が"},{"n":4,"text":"国際線において乗員以外の者が,「AS CREW」で操縦室に搭乗することは原則として許可されない。","correct":true,"explain":""}]},{"set":"W","num":16,"id":"W16","stem":"条件付運送旅客の運送について、正しいものを全て選べ","type":"multi","qnote":"OM 9.3.5","options":[{"n":1,"text":"条件付運送旅客搭乗の可否決定は、Passenger Manual等に基づき原則として空港支店(所)長がその責任において行う","correct":true,"explain":""},{"n":2,"text":"PICは、運送を拒否した場合、または関係者と協議のうえ当該条件付運送旅客の運送に関し所要の措置を指示した場合には、機長報告を実施する","correct":false,"explain":""},{"n":3,"text":"旅客担当部門は、条件付運送旅客に関する情報(状況、人数等)を入手した場合はその情報を直接PICに報告する","correct":false,"explain":"旅客担当部門→先任客室乗務員→PIC経由する"},{"n":4,"text":"幼児の搭乗可能数は、当該便のSalable Seat数の25%以内とし、端数は切り捨てた数とする","correct":true,"explain":"OMS 9.3.5.3.2"}]},{"set":"W","num":17,"id":"W17","stem":"AEDキットの使用者について、正しいものを全て選べ","type":"multi","qnote":"OMS 9.3.8.2.1.3","options":[{"n":1,"text":"医師、救急救命士または看護師を原則とする。","correct":true,"explain":""},{"n":2,"text":"医師の指示を受けなければ看護師は使用できない。","correct":false,"explain":"医師(歯科医師、獣医師を除く)、救急救命士または看護師を原則　→客室乗務員　→緊急上やむを得ない場合のみ、その他の者による使用が可能"},{"n":3,"text":"医師等ならびにAED教育を受講した客室乗務員による対応が不可能な場合でも、旅客は使用できない。","correct":false,"explain":""},{"n":4,"text":"医師等の速やかな対応が得られない場合は,AED教育を受講した客室乗務員が使用できる。","correct":true,"explain":""}]},{"set":"W","num":18,"id":"W18","stem":"危険物に関する事項について、正しいものを全て選べ","type":"multi","qnote":"OM 9.5.1","options":[{"n":1,"text":"弾丸は,銃弾箱等に収納すれば機内に持ち込むことができる。","correct":false,"explain":"銃弾箱等に収納の上、貨物室に搭載する"},{"n":2,"text":"S/L通知書により、受託部門から直接PICに連絡することができるが、それは出頭時刻までに連絡できない場合に限る。","correct":true,"explain":"受託部門は，原則として5.8.3乗務割の運用に定める運航乗務員の出頭時刻までに，ステーションオペレーション部門に以下の事項を連絡する。\n上記2.にかかわらず，受託部門から，出頭時刻までに連絡できないものに限り，S/L通知書により直接PICに連絡することができる。この場合，ステーションオペレーション部門にも連絡する。なおこの場合，ステーションオペレーション部門はPICに改めて連絡する必要はない。"},{"n":3,"text":"BU型輸送物の通知には「放射性輸送物取扱説明書」が添付される。","correct":true,"explain":"OMS 9.5.1.1.1.4"},{"n":4,"text":"拳銃の携帯が認められるのは、日本国の警察官等(皇宮警察官を含む)、外国政府要人等の護衛者である。","correct":false,"explain":"OM 9.5.2外国政府要人等の護衛者による拳銃の携帯については、原則認めない"}]},{"set":"W","num":19,"id":"W19","stem":"Sterile Cockpit Ruleについて、正しいものを全て選べ","type":"multi","qnote":"OMS 2.3.2.1.6","options":[{"n":1,"text":"Critical Phaseとは,離陸後高度10,000ftに到達するまで,および高度10,000ft通過後ブロックインまでの間である","correct":false,"explain":"ブロックアウト後〜"},{"n":2,"text":"CompanyRadio局は、原則としてプロックアウトから離陸後10分間、および着陸予定時刻の10分前からプロックインまでの間、航空機に対して通信を行ってはならない(但し緊急の場合を除く)","correct":false,"explain":"OM 8.2.3離陸後5分間\n原則として，ブロックアウトから離陸後5分間，および着陸予定時刻の10分前からブロックインまでの間，航空機に対して通信を行ってはならない。ただし，緊急の場合または安全のため必要な場合，ならびに運航上必須となる情報の伝達の場合はこの限りではない。"},{"n":3,"text":"Critical PhaseでのATC通信にはHeadsetとBoom Microphoneを使用する","correct":true,"explain":""},{"n":4,"text":"客室から操縦室への連絡を行ってはならない時間が通常に比べて長時間となる場合に備えて、予めCabin BriefingにてSterile Cockpit Rule解除までの時間を決めておく必要がある","correct":false,"explain":"Part.1 SD 9.2.1.2.7「Sterile Cockpit Rule適用の終了」を「Seat Belt Signの消灯」に代わるタイミングを適用する場合"}]},{"set":"W","num":20,"id":"W20","stem":"以下について、正しいものを全て選べ","type":"multi","qnote":"OMS 9.3.4","options":[{"n":1,"text":"機内において、電波を発しない電子機器は常時使用可能である。","correct":true,"explain":""},{"n":2,"text":"機内において、電波を発する電子機器はドアクローズからドアオープンまで法律上使用禁止である。","correct":false,"explain":"「着陸後の滑走が終了した時」まで"},{"n":3,"text":"AEDは、その教育を受講した客室乗務員も使用可能である。","correct":true,"explain":""},{"n":4,"text":"航行中、予約時の申請なしに旅客よりCPAP使用申請を受けた場合は、PIC判断で使用の可否を決定する。","correct":false,"explain":"OMS 9.3.4.5予約時：プライオリティゲストセンターが判断、　予約なしの機内：客室乗務員が使用可否を判断"}]},{"set":"W","num":21,"id":"W21","stem":"航空法83条の2に示される、国土交通省令で定める特別な方式による航行に含まれるものについて、正しいものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"RVSM運航","correct":true,"explain":""},{"n":2,"text":"RNAV運航","correct":true,"explain":""},{"n":3,"text":"ETOPS運航","correct":false,"explain":""},{"n":4,"text":"CAT-II運航","correct":true,"explain":""}]},{"set":"W","num":22,"id":"W22","stem":"Minimaの適用について、正しいものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"Full Facilitiesとは720m以上のALS,RCLM,RL,かつRTHLが作動していることを言う","correct":true,"explain":"OM 6.2.2.1.1.1"},{"n":2,"text":"ILS ApproachからSide Stepする場合のMinimaの下限値は、Non Precision ApproachのStraight-inのMinimaである","correct":true,"explain":"OM 6.2.2.2.1.3 Note 1\nNote:"},{"n":3,"text":"NOTAMでRLは使用できるがALSがOut Of Service、かつRVRが報じられていない場合、Landing MinimaがRVR-CMVで表示されていても夜間のCMVは適用できない","correct":false,"explain":"OM 6.2.1 RLのみ利用できる場合　X1.5\nSide Step Approachにも適用する。\n係数1、５で夜間のCMV可能\nCATⅠ運航，APVまたは非精密進入のLanding MinimaがRVR-CMVで表示されている場合であって，RVRが通報されないかまたは利用できない場合は通報された地上視程値(VIS)を次表によりConverted Meteorological Visibility(CMV)に換算して適用する。"},{"n":4,"text":"APVが使用できる場合、出発地のLanding MinimaはHATの値の100ft未満を切り捨てた値となる","correct":false,"explain":"OM 6.3.1 100ft未満を切り上げる"}]},{"set":"W","num":23,"id":"W23","stem":"最近の飛行経験について、正しいものを全て選べ","type":"multi","qnote":"法69条(最近の飛行経験)、規則158条","options":[{"n":1,"text":"すべての操縦者は、操縦する日からさかのぼって90日までの間に、離陸及び着陸をそれぞれ3回以上行った経験を有しなければならない","correct":false,"explain":"航空運送事業の用に供する航空機の運航に従事する航空機乗組員"},{"n":2,"text":"航空運送事業の用に供する航空機の運航に従事する操縦者は、夜間における離陸または着陸を含む運航に従事しようとする場合は、必要な離陸及び着陸の経験のうち、いかなる場合も少なくとも1回は夜間において行われたものでなければならない","correct":false,"explain":"定期運送用操縦士、凖定期運送用操縦士、計器飛行証明を有する者/計器飛行または計器飛行方式を行える装備の航空機/国土交通大臣が定める経路若しくは国土交通大臣が与える指示による経路"},{"n":3,"text":"計器飛行方式を行う航空機乗組員は、操縦する日からさかのぼって180日までの間に、6時間以上の計器飛行(模擬計器飛行を含む。)を行った経験を有しなければならない","correct":false,"explain":"計器飛行方式ではなく計器飛行"},{"n":4,"text":"模擬飛行装置又は飛行訓練装置を国土交通大臣の指定する方式により操作した経験は、離陸及び着陸、計器飛行方式を行った経験とみなす","correct":false,"explain":"模擬飛行装置：離着陸&計器飛行　　飛行訓練装置：計器飛行"}]},{"set":"W","num":24,"id":"W24","stem":"14nmを超えるDME Gapを生ずるCritical DMEがOut of Serviceの時(A350は加えてSBAS U/Sの時)、このRNAV SIDの経路を飛行出来るか?正しい記述を一つ選べ","type":"multi","qnote":"","options":[{"n":1,"text":"GPSのUpdateが出来ていれば、いかなる場合も可能","correct":false,"explain":""},{"n":2,"text":"GPSのUpdateに関係なく可能","correct":false,"explain":""},{"n":3,"text":"Intersection Departureを行わなければ可能","correct":false,"explain":""},{"n":4,"text":"経路を飛行する時間帯に5分間を超えるRAIM Holeの存在が予想されず、GPSのUpdateが出来ていれば可能","correct":true,"explain":""}]},{"set":"W","num":25,"id":"W25","stem":"法70条(アルコール又は薬物)に違反した場合の罰則について、正しいものを一つ選べ","type":"multi","qnote":"","options":[{"n":1,"text":"50万円以下の罰金かつ3年以下の懲役","correct":false,"explain":""},{"n":2,"text":"50万円以下の罰金または3年以下の懲役","correct":true,"explain":"2025/6以降拘禁刑に文言変わるので、ここは教官に要確認してから回答"},{"n":3,"text":"30万円以下の罰金かつ3年以下の懲役","correct":false,"explain":""},{"n":4,"text":"30万円以下の罰金または3年以下の懲役","correct":false,"explain":""}]},{"set":"X","num":1,"id":"X1","stem":"航空運送事業の用に供する航空機に乗り組む機長の要件について答えよ","type":"multi","qnote":"","options":[{"n":1,"text":"国土交通大臣は必要があると認める時は、認定を受けた機長がその知識及び能力を有するかどうかを臨時に審査することが出来る","correct":false,"explain":"72条第3項「審査しなければならない」国土交通大臣にとっての権利ではなく、義務のような扱い"},{"n":2,"text":"臨時の審査を受けることを拒否した機長は、再度、期日を指定して審査を受ける必要がある","correct":false,"explain":"72条第４項　機長認定は効力を失う"},{"n":3,"text":"指定本邦航空運送事業者は、国土交通大臣に代わって機長が知識及び能力を有するかどうかを定期的、又は臨時に審査しなければならない","correct":true,"explain":"72条6項"},{"n":4,"text":"指定本邦航空運送事業者が法72条の規定や国土交通省令に違反した場合には、運営の改善に必要な措置を取るべきことを命じることが出来る","correct":true,"explain":"72条11項"}]},{"set":"X","num":2,"id":"X2","stem":"当社の航空運送事業の用に供する飛行機に搭載すべき燃料について、答えよ（タービン発動機を装備しIFRにて代替空港を表示するもの）","type":"multi","qnote":"","options":[{"n":1,"text":"不測の事態を考慮して航空機に携帯しなければならない燃料は、着陸地までの飛行を終わるのに要する燃料の量の5%に相当する燃料の量、着陸地の上空450メートルの高度で5分間待機することができる燃料の量のうちいずれか多い量を搭載しなければならない。","correct":true,"explain":""},{"n":2,"text":"大圏距離が3,000マイル以上の路線においては、航空機ごとの燃料補正、路線ごとの気象状態の分析等諸条件を満たせば、上記の着陸地までの飛行を終わるまでに要する燃料の量の5%の量を3%に減ずることができる。","correct":false,"explain":"(3000→4000)"},{"n":3,"text":"必要燃料搭載量の算定にあたり、離陸までに消費される燃料の量を考慮しなければならない。","correct":true,"explain":""},{"n":4,"text":"計器飛行方式により飛行をおこなう場合、全ての飛行計画において発動機が不作動の場合又は飛行機の与圧を維持する機能が損なわれた場合に着陸に適した空港等までの飛行に要する燃料を考慮しなければならない。","correct":true,"explain":""}]},{"set":"X","num":3,"id":"X3","stem":"機長認定において有することが求められる、航空機の機長として必要な国土交通省令で定める知識及び能力について、答えよ","type":"multi","qnote":"","options":[{"n":1,"text":"出発前の確認","correct":true,"explain":""},{"n":2,"text":"飛行計画の作成及び変更","correct":false,"explain":"運航管理者の承認"},{"n":3,"text":"航空機乗組員、客室乗務員に対する指導、育成","correct":false,"explain":""},{"n":4,"text":"安全阻害行為等の抑止の措置、危難の場合の措置その他の航空機の運航における安全管理","correct":true,"explain":""}]},{"set":"X","num":4,"id":"X4","stem":"指定本邦航空運送業者がおこなう、運航に必要な経験及び知識の付与について、答えよ","type":"multi","qnote":"","options":[{"n":1,"text":"運航に必要な経験及び知識に係る乗務要件は飛行地域と空港等である。","correct":true,"explain":""},{"n":2,"text":"飛行地域要件は現在日本航空には設定がない。","correct":true,"explain":""},{"n":3,"text":"空港等にかかわる要件とは、エリア要件とPICとしての空港要件である。","correct":true,"explain":""},{"n":4,"text":"エリア要件はそれぞれのエリアに初めて乗り入れる際に行われる審査に合格することで満足される。また副操縦士のときのエリア経験は、機長昇格後も有効である。","correct":false,"explain":"有効ではない"}]},{"set":"X","num":5,"id":"X5","stem":"特別審査、臨時審査、随時審査について、答えよ","type":"multi","qnote":"","options":[{"n":1,"text":"臨時審査は、機長認定を受けた者について、国土交通大臣が必要と認められた場合におこなわれる。","correct":true,"explain":""},{"n":2,"text":"随時審査とは、国土交通大臣が必要と認めた時、運航審査官による定期審査等を行うものである。","correct":false,"explain":"特別審査"},{"n":3,"text":"特別審査は事業者によって行われる審査である。","correct":false,"explain":"随時審査"},{"n":4,"text":"いずれの審査においても、機長認定時に求められるものと同様の知識および能力を有するかどうかについて審査される。","correct":true,"explain":""}]},{"set":"X","num":6,"id":"X6","stem":"機長の権限について、答えよ","type":"multi","qnote":"","options":[{"n":1,"text":"安全阻害行為等のうち、特に禁止すべき行為として国土交通省令で定めるものをした旅客に対し、当該行為を反復し、又は継続してはならない旨の命令をすることができる。","correct":true,"explain":"厳密には航空機内にある者に対して"},{"n":2,"text":"機長に事故があった時は、機長に代わってその職務を行うべきとされている者が、当該航空機に乗り組んで職務を行うものを指揮監督する。","correct":true,"explain":""},{"n":3,"text":"航空運送事業の用に供する航空機は、その機長が運航管理者の承認を受けなければ出発し、またはその飛行計画を変更してはならない。","correct":true,"explain":""},{"n":4,"text":"機長がその職権を濫用して、航空機内にある者に対し義務のないことを行わせ、又は行うべき権利を妨害した場合は、50万円以下の罰金に処せられる。","correct":false,"explain":"2年以下の拘禁刑、法151条"}]},{"set":"X","num":7,"id":"X7","stem":"OMに挙げられる、原則としてCabin Briefingに含める事項について、答えよ","type":"multi","qnote":"","options":[{"n":1,"text":"飛行計画および気象情報","correct":true,"explain":""},{"n":2,"text":"緊急時の業務分担","correct":true,"explain":""},{"n":3,"text":"操縦室ドアの施錠および開閉の方法","correct":true,"explain":""},{"n":4,"text":"操縦室と客室間の相互連絡方法","correct":true,"explain":""}]},{"set":"X","num":8,"id":"X8","stem":"整備について、答えよ","type":"multi","qnote":"","options":[{"n":1,"text":"搭載用航空日誌にある確認主任者の署名は、法確認の証である","correct":true,"explain":""},{"n":2,"text":"QMSでその他の飛行場として定める空港には、当該型式確認主任者は配置されていない","correct":true,"explain":""},{"n":3,"text":"OMSで定める当該航空機の正規飛行場以外へのDiversion後、再出発に際してMELを適用する場合、いかなる場合も当該型式確認主任者による整備処置が必要である","correct":false,"explain":"PORTABLE OXYGEN BOTTLE USED」および「First Aid Kit Used」のみ運航乗務員が代行してMELを適用できる"},{"n":4,"text":"日本航空の定期整備区分にはA,J,C,K,Mがあるが、型式によっては全区分の定期整備が行われるわけではない","correct":true,"explain":""}]},{"set":"X","num":9,"id":"X9","stem":"禁止命令対象行為に該当するものについて、答えよ","type":"multi","qnote":"","options":[{"n":1,"text":"指示に従わず座席ベルトを正当な理由なく着用しないこと","correct":true,"explain":""},{"n":2,"text":"座席ベルト着用サイン点灯時、座席の背、テーブル等を正当な理由なく所定の位置に戻さないこと","correct":false,"explain":"座席ベルト着用サイン点灯時→離着陸時において"},{"n":3,"text":"非常脱出の妨げになる場所へ手荷物を正当な理由なく放置すること","correct":true,"explain":""},{"n":4,"text":"告示により定められた消火器、非常用警報装置、救命胴衣等を正当な理由なく操作・移動すること","correct":true,"explain":""}]},{"set":"X","num":10,"id":"X10","stem":"安全阻害行為の対処について、答えよ","type":"multi","qnote":"","options":[{"n":1,"text":"カテゴリー1に該当する行為（親告罪ではない）があったが、謝罪があった為警察の待機要請はしなかった。","correct":false,"explain":"警察待機要請必要"},{"n":2,"text":"カテゴリー2に該当する行為があり、最初の口頭注意にて抑止されたが、警察の待機要請は必要である。","correct":false,"explain":"要請必要なし"},{"n":3,"text":"カテゴリー3に該当する行為があり、客室乗務員と機長の協議で警察待機を要請した。","correct":true,"explain":""},{"n":4,"text":"カテゴリー2に該当する行為があり、再々の口頭注意に応じず、命令書の手交を行ったが、引き続き当該行為を反復継続した。その後到着前に謝罪があったので、警察待機要請はしなかった。","correct":false,"explain":"要請必要"}]},{"set":"X","num":11,"id":"X11","stem":"安全阻害行為について、答えよ","type":"multi","qnote":"","options":[{"n":1,"text":"安全阻害行為等とは、当該航空機の安全を害し、当該航空機内にあるその者以外の者若しくは財産に危害を及ぼし、当該航空機内の秩序を乱し、又は当該航空機内の規律の維持に違反する行為をいう","correct":true,"explain":""},{"n":2,"text":"航空機内にある者は、機長の命令又は承認に基づき、機長が法73条の4第1項の措置をとることに対し必要な援助を行うことができる","correct":false,"explain":""},{"n":3,"text":"機長は、航空機を着陸させる場合において、法73条の4第1項の規定に基づき拘束している者があるとき、又は同項の規定に基づき降機させようとする者があるときは、できる限り着陸前に、拘束又は降機の理由を示してその旨を着陸地の最寄りの航空交通管制機関に連絡しなければならない","correct":true,"explain":""},{"n":4,"text":"機長は、法73条の4第1項の規定に基づき拘束している場合において、航空機を着陸させたときは、その者を引き続き拘束したまま当該航空機を離陸させてはならない","correct":false,"explain":""}]},{"set":"X","num":12,"id":"X12","stem":"燃料欠乏に関する記述について、答えよ","type":"multi","qnote":"","options":[{"n":1,"text":"Top of Descent以前の残存燃料の管理にあたっては、PICは飛行計上の目的地の残存燃料量がMinimum Diversion Fuel(代替飛行場を選定しない場合はFinal Reserve Fuel）を満足しないと予想される場合は、必ず目的地を変更しなければならない。","correct":false,"explain":""},{"n":2,"text":"着陸を計画する飛行場の選択肢が一つに限定され、現在発出されている管制承認に変更があり遅延すると、着陸を決心した飛行場における着陸時の残存燃料が計画したFinal Reserve Fuel未満になる可能性があると判断した場合は、管制機関に対して「Minimum Fuel」を通報しなければならない。","correct":true,"explain":""},{"n":3,"text":"「Minimum Fuel」を宣言しただけの場合には、機長報告書の提出は必要ない。","correct":false,"explain":"必要になる"},{"n":4,"text":"残存燃料の範囲内で会社の定める指定飛行場に着陸できない場合は、安全に着陸できる限り、適宜その他の飛行場に着陸することができる。","correct":true,"explain":""}]},{"set":"X","num":13,"id":"X13","stem":"次のうち航空法第76条に定められる報告の義務について、答えよ","type":"multi","qnote":"","options":[{"n":1,"text":"航空機の墜落、衝突または火災","correct":true,"explain":""},{"n":2,"text":"航空機による人の死傷または物件の損壊","correct":true,"explain":""},{"n":3,"text":"航空機内にある者の死亡（自然死、加害行為に起因する死亡、通常立ち入らない区域に隠れていた者の死亡を含む）","correct":false,"explain":"()部分は含まない規則165条の2"},{"n":4,"text":"航空機内にある者の行方不明","correct":true,"explain":""}]},{"set":"X","num":14,"id":"X14","stem":"最近の飛行経験について、答えよ","type":"multi","qnote":"","options":[{"n":1,"text":"操縦する日からさかのぼって180日までの間に離陸および着陸を6回以上行った経験を有しなくてはならない。","correct":false,"explain":"90日以内に3回"},{"n":2,"text":"計器飛行を行う場合は操縦する日からさかのぼって90日までの間に3時間の経験を有しなくてはならない。","correct":false,"explain":"180日以内に6時間"},{"n":3,"text":"夜間における離着陸を行うには、定められた離着陸経験のうち一回は必ず夜間で行われなくてはならない。","correct":false,"explain":"航空運送事業には例外がある"},{"n":4,"text":"模擬飛行装置又は飛行訓練装置を国土交通大臣の指定する方式により操作した経験は、離陸および着陸、計器飛行を行った経験とみなす。","correct":false,"explain":"離着陸の経験は飛行訓練装置ではみなされない"}]},{"set":"X","num":15,"id":"X15","stem":"Observe Seat使用者が搭乗する場合について、答えよ","type":"multi","qnote":"","options":[{"n":1,"text":"社員（グループ航空会社社員を含む。）または委託先社員が業務上搭乗する場合","correct":true,"explain":""},{"n":2,"text":"旅行会社社員が業務上搭乗する場合","correct":false,"explain":""},{"n":3,"text":"政府職員が公務として搭乗する場合","correct":true,"explain":"許可の対象は，社員（グループ航空会社社員を含む。）または委託先社員が業務上搭乗する場合，会社業務上特に立入りが必要とされる者が当該業務のために搭乗する場合および政府職員が公務として搭乗する場合に限る"},{"n":4,"text":"他社運航乗務員が空港要件充足のため搭乗する場合","correct":false,"explain":""}]},{"set":"X","num":16,"id":"X16","stem":"ドクターズキットの使用者について、答えよ","type":"multi","qnote":"","options":[{"n":1,"text":"医師または医師の指示を受けた看護師が使用できる。","correct":true,"explain":""},{"n":2,"text":"無線やACARSによる医師からの指示を受けた客室乗務員は使用できる。","correct":false,"explain":""},{"n":3,"text":"歯科医師は使用できるが、獣医師は使用できない。","correct":true,"explain":""},{"n":4,"text":"無線やACARSによる医師からの指示を受けた看護師は使用できない。","correct":false,"explain":""}]},{"set":"X","num":17,"id":"X17","stem":"条件付運送旅客に関して、答えよ","type":"multi","qnote":"","options":[{"n":1,"text":"旅客担当部門は、条件付運送旅客に関する情報（状況、人数等）を先任客室乗務員に連絡する。","correct":true,"explain":""},{"n":2,"text":"PICは、当該条件付運送旅客の運送に関し所要の措置を指示することができる。その際、PICは機長報告書を提出する。","correct":false,"explain":"CAEは不要拒否した場合は必要"},{"n":3,"text":"身体障害者補助犬の搭乗は原則として拒否しない。介助犬、聴導犬は付添人として取り扱うことはできない。","correct":true,"explain":""},{"n":4,"text":"医学的理由から離着陸時に座席をリクライニングする必要がある、またはフットレストを使用する必要がある旅客については着席位置を条件に運送を引き受けることができる。","correct":true,"explain":""}]},{"set":"X","num":18,"id":"X18","stem":"危険物に関する事項について、答えよ","type":"multi","qnote":"","options":[{"n":1,"text":"ACARS S/L通知書について、「Accept」または「Reject」を返信するが、この返信はPICの署名の代わりであるので必ずPICが返信する。なお、ACARSの操作について、PICの承認のもと他の運航乗務員が実施してもよい","correct":true,"explain":"ACARSの操作は代行可"},{"n":2,"text":"警察官等の拳銃携帯がある場合、旅客担当部門は所定の書式に必要事項を記載の上、第1片を先任客室乗務員へ提出し、第2片を旅客担当部門で保管する。","correct":false,"explain":"第1片→PIC\n第2片→先任"},{"n":3,"text":"BU型輸送物の通知には「放射性輸送物取扱説明書」が必要である。","correct":true,"explain":"OMS 9.5.1.1.1.4"},{"n":4,"text":"拳銃の携帯が認められるのは、日本国の警察官等（皇宮警察官を含む）、外国政府要人等の護衛者である。","correct":false,"explain":"護衛者は原則不可"}]},{"set":"X","num":19,"id":"X19","stem":"RNAV SIDの飛行について、答えよ","type":"multi","qnote":"","options":[{"n":1,"text":"空港標高から500ftまでにLNAV機能をEngageする(Airbus:Nav modeをfollow）","correct":true,"explain":"空港標高から高度500ftまでにLNAV機能をEngageする。"},{"n":2,"text":"旋回に伴う短時間の経路からの逸脱は、航法精度の半分を目安に制限する（RFレグを除く）","correct":false,"explain":"クロストラックエラーは航法精度の半分（RNAV1では0.5nm，RNAV2では1nm）を目安に制限する。ただし旋回に伴う短時間の経路からの逸脱は航法精度まで許容される。"},{"n":3,"text":"離陸時にGPSでPosition Updateされない時、滑走路端から1000ftを超える位置からのIntersection Take Offは出来ない","correct":false,"explain":"Intersectionからの離陸の場合\n\nFMSに離陸開始点の位置補正情報を入力し，滑走開始時にその位置にUpdateされることを確認する。\n\n補正値が1,000ft(0.17nm)以内の場合は入力しなくてもよい。この場合のUpdateは滑走路端に対し行なわれるがこれは許容される。"},{"n":4,"text":"RNAV1運航の継続に影響を与えるような装置の故障や乗務員の操作に起因する不具合が発生した場合、機長報告を実施する。","correct":true,"explain":""}]},{"set":"X","num":20,"id":"X20","stem":"緊急時に関する事項について、答えよ","type":"multi","qnote":"","options":[{"n":1,"text":"航行中、緊迫した危難が生じた場合、Fly Firstを念頭に地上又は水上の人又は物件に対して配慮する。","correct":false,"explain":"危難の防止に必要な手段を尽くさなければならない"},{"n":2,"text":"関係法規またはOMより逸脱した行為を行った場合、速やかにATC機関および運航管理者に通報しなればならない。","correct":true,"explain":""},{"n":3,"text":"緊急事態発生時、Fly Firstの観点から、機内アナウンスは他の乗員に行わせなければならない。","correct":false,"explain":"余裕がないときはおこなわせることができる"},{"n":4,"text":"PICは必要と判断する場合、遭難通信もしくは緊急通信を発することをためらってはならない。","correct":true,"explain":""}]},{"set":"X","num":21,"id":"X21","stem":"騒音軽減方式について、答えよ","type":"multi","qnote":"","options":[{"n":1,"text":"いわゆるNADP1とは、Thrust Cut Back上昇方式のことである。","correct":false,"explain":"Steepest climb"},{"n":2,"text":"ITMの離陸に関してはSteepest Climb Procedureが要求されている。","correct":true,"explain":""},{"n":3,"text":"NADP2は、空港近隣における騒音軽減に有効である。","correct":false,"explain":"離れた市街地での騒音軽減に有効"},{"n":4,"text":"運航の安全確保に支障がない限り実施すべきものであり、実施を断念する場合にはその許可を得るべき性格のものである","correct":false,"explain":"安全確保に支障がない範囲で実施されるもの、支障ありと判断した場合にはその実施を断念すべき性格のもの"}]},{"set":"X","num":22,"id":"X22","stem":"運航管理者に関する事項について、答えよ","type":"multi","qnote":"","options":[{"n":1,"text":"運航管理者は技能証明を有していない","correct":true,"explain":"技能検定(法78条)、従って航空従事者でもない(法24条)"},{"n":2,"text":"航空運送事業の用に供する国土交通省令で定める航空機は、その機長が、法102条第1項の本法航空運送事業者の置く運航管理者の承認を受けなければ、出発し、又はその飛行計画を変更してはならない","correct":true,"explain":""},{"n":3,"text":"法77条の国土交通省令で定める航空機は、最大離陸重量3700キログラムを超える飛行機及び最大離陸重量が9080kgを超える回転翼航空機(次に掲げる航空機を除く。)である。<例外省略>","correct":false,"explain":"（正）施行規則166条の6最大離陸重量5700キログラムを超える飛行機及び最大離陸重量が9080kgを超える回転翼航空機(次に掲げる航空機を除く。)である。"},{"n":4,"text":"機長が、法77条の規定に違反して、航空機を出発させ、又は飛行計画を変更したとき、罰則は30万円以下の罰金である","correct":false,"explain":"法153条　50万円以下\n五十万円以下の罰金に処する。"}]},{"set":"X","num":23,"id":"X23","stem":"命令書について、答えよ","type":"multi","qnote":"","options":[{"n":1,"text":"禁止命令対象行為のみに交付できる","correct":true,"explain":""},{"n":2,"text":"原則として、対象旅客、周りの旅客へ聞こえるよう、はっきりとその行為をやめるよう読み上げ手交する。ただし事態を悪化させると判断される場合には、その限りではない。","correct":false,"explain":"必ず、周りに聞けるように読み上げる。\n「ただし事態を・・・・ない」→警告書の話"},{"n":3,"text":"必ず、PICの許可を得てから手交する。許可が得られない場合は「警告書」で対応する。","correct":true,"explain":""},{"n":4,"text":"「命令書」を手交しない場合には、罰則規定を適用することが出来なくなる。","correct":true,"explain":""}]},{"set":"X","num":24,"id":"X24","stem":"OJT中にHND、ITM、ICN（仁川）、HKG（香港）を経験し、昇格路線審査をHND-ITMで受けた場合の乗務要件について、正しいものを一つ選べ","type":"single","qnote":"","options":[{"n":1,"text":"機長昇格訓練中の離着陸経験は機長昇格後も一定期間は所定の経験として扱われる。","correct":true,"explain":""},{"n":2,"text":"半年以内にF/OとしてのSPKの着陸経験があれば、昇格後すぐHND－SPKにPICとして乗務出来る。","correct":false,"explain":"FOの要件ではなく、OJTの経験？"},{"n":3,"text":"昇格後すぐHND－HKGにPICとして乗務できる。","correct":false,"explain":"エリア要件を満たさない"},{"n":4,"text":"昇格後すぐNRT－ICNにPICとして乗務できる。","correct":false,"explain":"2空港行っているのでOKだが、NRTの空港要件(自習)を満たしていない"}]},{"set":"X","num":25,"id":"X25","stem":"広域航法について、正しいものを一つ選べ","type":"single","qnote":"","options":[{"n":1,"text":"RNAV1及びRNP1は主としてターミナル空域において使用されるRNAV間隔で、航空法で定める特別な方式による航行であり、当該空域内の全飛行時間の90%における航法精度は±1nm以内でなければならない","correct":false,"explain":"主としてエンルートやターミナル空域において使用されるRNAV運航で，当該空域内の全飛行時間の95%における航法精度はそれぞれ±1nm,±2nm以内でなければならない"},{"n":2,"text":"出発に際しては、誤入力防止のためPushback開始後滑走路に入る前までに、正しい空港、滑走路の入力、経路が適切に表示されており、GPSでUpdateされていることを再確認する","correct":false,"explain":"誤入力防止のため，Pushback開始後滑走路に入る前までに，正しい空港，滑走路の入力および経路が適切に表示されていることを再確認する。滑走路に入る前にGPSでUpdateされていることを確認する\nGPSは滑走路入る前"},{"n":3,"text":"到着においては、指示された到着経路と航法データベースから選択したRNAV経路がチャートと相違ないことをCDUにて確認する","correct":false,"explain":"到着方式，滑走路を入力する。指示された到着経路と航法データベースから選択したRNAV経路がチャートと相違ないことをMap DisplayおよびCDUにて確認する。到着方式，滑走路が適切に表示されることも確認する。"},{"n":4,"text":"RNAV運航においては、OMSで指示されたタイミングで機上装置の正常作動を確認し、その後の飛行では機上装置の作動確認に代えて航法精度のモニター(精度低下のMessageの有無の確認)を行えば良い。従って経路飛行中でも、必要とされる航法センサーの必要数を下回っても良い","correct":true,"explain":""}]},{"set":"Y","num":1,"id":"Y1","stem":"機長認定路線審査の位置づけに関する説明として正しいものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"機長として必要な知識および能力を有することについての認定を受ける審査である","correct":true,"explain":""},{"n":2,"text":"路線審査には、「安全阻害行為等の抑止の措置」に関するものが含まれる","correct":true,"explain":""},{"n":3,"text":"路線審査には、「危難の場合の措置」に関するものが含まれる","correct":true,"explain":""},{"n":4,"text":"路線審査には、「通常状態及び異常状態における航空機の操作および措置」に関するものが含まれる","correct":false,"explain":"技能審査"}]},{"set":"Y","num":2,"id":"Y2","stem":"社内機長認定が失効する場合を全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"社内定期審査または社内臨時審査を受けなかったとき","correct":true,"explain":""},{"n":2,"text":"社内臨時審査を拒否したとき","correct":true,"explain":""},{"n":3,"text":"社内定期審査または社内臨時審査に合格しなかったとき","correct":true,"explain":""},{"n":4,"text":"社内定期訓練においてUnachievedとなった場合","correct":false,"explain":""}]},{"set":"Y","num":3,"id":"Y3","stem":"航空法に関する次の文章の内、正しいものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"航空法の目的は、航空輸送の安全を確保するとともにその利用者の利便の増進を図り、並びに航空の脱炭素化を推進するための措置を講じ、あわせて無人航空機の飛行における遵守事項等を定めてその飛行の安全の確保を図ることにより、航空の発達を図り、もって公共の福祉を増進することである。","correct":true,"explain":"2025/6法改正に合わせて文言が変更されていた"},{"n":2,"text":"運航管理者も航空従事者の一員である。","correct":false,"explain":"航空従事者:22条の技能証明を受けた者(パイロットと整備士のみ)"},{"n":3,"text":"72条第1項でいうところの国土交通省令で定める航空機とは、最大離陸重量が5700kgを超える飛行機及び最大離陸重量が9080kgを超える回転翼航空機である。","correct":true,"explain":""},{"n":4,"text":"指定本邦航空運送事業者が行なう定期審査、臨時審査においては、同乗させるべき「国土交通大臣の指名する職員」を「査察操縦士」と読み替えることができる。","correct":true,"explain":""}]},{"set":"Y","num":4,"id":"Y4","stem":"次のうち、現在我が社の査察操縦士が行える審査を全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"定期審査","correct":true,"explain":""},{"n":2,"text":"随時審査","correct":true,"explain":""},{"n":3,"text":"特別審査","correct":false,"explain":""},{"n":4,"text":"実施される全ての機長認定路線審査","correct":false,"explain":"一部A350はまだ"}]},{"set":"Y","num":5,"id":"Y5","stem":"安全阻害行為について、正しいものをすべて選べ","type":"multi","qnote":"","options":[{"n":1,"text":"安全阻害行為等とは、当該航空機の安全を害し、当該航空機内にあるその者以外の者若しくは財産に危害を及ぼし、当該航空機内の秩序を乱し、又は当該航空機内の規律に違反する行為をいう","correct":true,"explain":""},{"n":2,"text":"航空機内にある者は、機長の命令又は承認に基づき、機長が法73条の4第1項の措置をとることに対し必要な援助を行うことができる","correct":false,"explain":"要請又は承認"},{"n":3,"text":"機長は、航空機を着陸させる場合において、法73条の4第1項の規定に基づき拘束している者があるとき、又は同項の規定に基づき降機させようとする者があるときは、できる限り着陸前に、拘束又は降機の理由を示してその旨を着陸地の最寄りの航空交通管制機関に連絡しなければならない","correct":true,"explain":""},{"n":4,"text":"機長は、法73条の4第1項の規定に基づき拘束している場合において、航空機を着陸させたときは、その者を引き続き拘束したまま当該航空機を離陸させてはならない","correct":false,"explain":""}]},{"set":"Y","num":6,"id":"Y6","stem":"機長認定において査察運航乗務員が社内認定審査を行うことのできる範囲内の機長として、正しいものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"認定を受けている機長で、他型式の航空機について認定を受けようとする者","correct":true,"explain":""},{"n":2,"text":"認定を受けている機長で、準類似規程事業者に移籍、出向し認定を受けようとする者","correct":true,"explain":""},{"n":3,"text":"認定を受けていた機長で、航空業務の停止を命じられていたが再訓練を経て、過去認定を受けていた型式と同一型式の航空機について認定を受けようとする者","correct":false,"explain":"72条第１項適用"},{"n":4,"text":"訓練部門への配属より復帰しようとする者","correct":true,"explain":""}]},{"set":"Y","num":7,"id":"Y7","stem":"Seat Belt Signの運用に関する記述のうち、正しいものを全て選べ","type":"multi","qnote":"2025/6全て◯でした","options":[{"n":1,"text":"地上移動中、PICはベルト着用サインを点灯する","correct":true,"explain":""},{"n":2,"text":"着陸のためのベルト着用サインは、原則として客室乗務員へ10,000ftを通知して点灯させる","correct":true,"explain":""},{"n":3,"text":"先任客室乗務員から要請を受けたPICは、直ちにベルト着用サインを点灯する","correct":true,"explain":""},{"n":4,"text":"客室乗務員は、ベルト着用サイン点灯中、迅速に対応しなければ旅客や機体に重大な損害が生じると判断される事象が発生した場合には、客室乗務員の判断で離席し対応することができる","correct":true,"explain":""}]},{"set":"Y","num":8,"id":"Y8","stem":"OMにおける飛行計画及び搭載燃料に関する記述のうち、正しいものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"Contingency Fuelとは、Trip Fuelの重量の5%に相当する量、または目的地上空1.500ftの高度で5分間Holdingすることができる量のどちらか多い方とする","correct":true,"explain":""},{"n":2,"text":"標準Extra Fuelを下回る状態で離陸してはならない","correct":false,"explain":"EXTRAは必要燃料ではない上4つ(法)＋2つ(OM)TAXI、ADDの6つが必要燃料"},{"n":3,"text":"飛行時間が6時間以内で、目的地の気象情報が，着陸予定時刻の前後1時間の間、雲高について2,000ftまたはLanding MinimaのHATもしくはHAAに1,500ftを加えた値のいずれか大きい値以上であり、視程が5,000m以上の場合には代替飛行場を選定する必要はない","correct":false,"explain":"独立した複数滑走路の条件もあるから"},{"n":4,"text":"IFRの飛行計画で、適切な代替飛行場が得られない場合の必要搭載燃料は、Taxi Fuel,Trip Fuel,Contingency Fuel,Additional Fuel,2時間分のReserve Fuelである","correct":true,"explain":""}]},{"set":"Y","num":9,"id":"Y9","stem":"航空法の規定に加えて、OMで要求されるPICの出発前の確認項目を全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"全てのドアの閉鎖","correct":true,"explain":""},{"n":2,"text":"搭乗旅客数","correct":true,"explain":""},{"n":3,"text":"危険物の搭載の有無","correct":false,"explain":"全旅客が着席していること(化粧室等に旅客が存在していないこと)"},{"n":4,"text":"必要な書類の搭載","correct":true,"explain":""}]},{"set":"Y","num":10,"id":"Y10","stem":"安全阻害行為のうち、カテゴリーⅡに含まれるものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"乗降口又は非常口の扉の開閉装置を正当な理由なく操作する","correct":true,"explain":""},{"n":2,"text":"携帯用酸素ボトルを正当な理由なく操作する、或いは移動させる","correct":true,"explain":""},{"n":3,"text":"通路で喫煙する","correct":false,"explain":""},{"n":4,"text":"泥酔して大騒ぎする","correct":false,"explain":""}]},{"set":"Y","num":11,"id":"Y11","stem":"次の文のうち、正しいものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"原則として警告書はPICに報告後に手交されるが、事後報告となっても構わない。","correct":true,"explain":""},{"n":2,"text":"電磁遮蔽バッグを使用した場合は、機長報告書も提出する。","correct":false,"explain":"客室乗務員がCAFにて報告"},{"n":3,"text":"全てのENGを停止していなければ、機長は機内での電子機器の使用を許可出来ない。","correct":false,"explain":"地上にて旅客が長時間機内で待機せざるを得ない状況ならPICが許可できる(OMS 9.3.4)"},{"n":4,"text":"搭乗中に泥酔、酩酊している者が居た場合、その者を降機させることは可能である。","correct":true,"explain":"OMA 9.3.3.2運送不可旅客\n会社は、次の各号に該当すると認めた場合には、当該旅客の搭乗を拒絶し、又は降機させることができます\n（ホ）他の旅客に不快感を与え又は迷惑を及ぼすおそれのある場合"}]},{"set":"Y","num":12,"id":"Y12","stem":"安全阻害行為に関する機長の権限のうち、正しいものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"安全阻害行為等を抑止するための措置（法第73条第5項の規定による命令を除く）は、搭乗のために乗降口が開かれているときにもとることができる。","correct":false,"explain":"法73条の4機長は、航空機内にある者が、離陸のため当該航空機のすべての乗降口が閉ざされた時から着陸の後降機のためこれらの乗降口のうちいずれかが開かれる時までに、安全阻害行為等をし、又はしようとしていると信ずるに足りる相当な理由があるときは、当該航空機の安全の保持、当該航空機内にあるその者以外の者若しくは財産の保護又は当該航空機内の秩序若しくは規律の維持のために必要な限度で、その者に対し拘束その他安全阻害行為等を抑止するための措置（第五項の規定による命令を除く。）をとり、又はその者を降機させることができる。"},{"n":2,"text":"安全阻害行為等を抑止するための措置（法第73条第5項の規定による命令を除く）は、着陸後降機のために乗降口が開かれるまで、とることができる。","correct":true,"explain":""},{"n":3,"text":"安全阻害行為等を抑止するための措置として、拘束をすることは許されない。","correct":false,"explain":""},{"n":4,"text":"機長は、安全阻害行為等を抑止するために、機内にいるものに拘束する際の援助を命ずることができる。","correct":false,"explain":""}]},{"set":"Y","num":13,"id":"Y13","stem":"Hijackに関する記述の内、正しいものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"粗暴な言葉や乗員の指示に従わない等の迷惑行為があったら、他の乗客の動向に注意しながら操縦室周りへの立ち入りを禁止する。","correct":true,"explain":""},{"n":2,"text":"迷惑旅客の行動が暴力行為にまで及んだ時、警察の待機を要請する。","correct":true,"explain":""},{"n":3,"text":"操縦室周りをカートなどでBlockするのは、迷惑旅客の行動が生命の危険を脅かす状態までエスカレートした時である。","correct":true,"explain":"LVL3"},{"n":4,"text":"SQ7500のSetや、緊急事態の宣言をするのは、操縦室に侵入しようとする者が現れた時である。","correct":false,"explain":"←LVL3の段階で行う行動"}]},{"set":"Y","num":14,"id":"Y14","stem":"機長の報告に関する記述のうち、正しいものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"報告を怠った場合、又は虚偽の報告を行った場合は50万円以下の罰金に処せられる。","correct":true,"explain":"法153条"},{"n":2,"text":"安全阻害行為等を抑止するために命令書を発行した場合、機長報告書も提出する。","correct":true,"explain":""},{"n":3,"text":"報告すべき内容について、機長が報告出来ない場合には副操縦士が報告する。","correct":false,"explain":"当該航空機の使用者が報告"},{"n":4,"text":"航空機の墜落や衝突を無線で知った時も、その旨を報告しなければならない。","correct":false,"explain":"無線により知った場合を除く"}]},{"set":"Y","num":15,"id":"Y15","stem":"機長の報告に関する記述のうち、正しいものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"飛行中RNAV１運航に不具合をきたした場合は、3日以内に報告が必要である。","correct":true,"explain":""},{"n":2,"text":"明らかに、こうもりと分かる飛行物体と接触した場合には、鳥衝突報告は必要ない。","correct":false,"explain":"コウモリ等を含む"},{"n":3,"text":"ACARSに不具合が起きた場合も報告が必要である。","correct":false,"explain":""},{"n":4,"text":"Hold Over Timeを超過してGTBした場合も報告は必要である","correct":false,"explain":""}]},{"set":"Y","num":16,"id":"Y16","stem":"最近の飛行経験について、正しいものを全て選べ","type":"multi","qnote":"法69条、施158、161条","options":[{"n":1,"text":"全ての操縦者は、操縦する日からさかのぼって90日までの間に、離陸および着陸をそれぞれ3回以上行った経験を有しなければならない。","correct":false,"explain":"航空運送事業の用に供する航空機の運航に従事する航空機乗組員のうち、操縦者は、・・・"},{"n":2,"text":"航空運送事業の用に供する航空機の運航に従事する操縦者は、夜間における離陸または着陸を含む運航に従事しようとする場合は、必要な離陸及び着陸の経験のうち、いかなる場合も少なくとも1回は夜間において行われたものでなければならない","correct":false,"explain":"但し書きあり。その場合はこの限りでない"},{"n":3,"text":"計器飛行方式を行う航空機乗組員は、操縦する日からさかのぼって180日までの間に、6時間以上の計器飛行（模擬計器飛行を含む。）を行った経験を有しなければならない","correct":false,"explain":"計器飛行を行う航空機乗組員"},{"n":4,"text":"模擬飛行装置又は飛行訓練装置を国土交通大臣の指定する方式により操作した経験は、離陸および着陸、計器飛行を行った経験とみなす。","correct":false,"explain":"飛行訓練装置では離着陸は経験とみなさない"}]},{"set":"Y","num":17,"id":"Y17","stem":"運航管理に関する記述のうち、正しいものを全て選べ","type":"multi","qnote":"OM 3運航管理および運航基準","options":[{"n":1,"text":"運航管理者が単独でも行使できる。","correct":false,"explain":"PICおよび運航管理者が協力して行使し、Company Clearanceによってその効力が発生する"},{"n":2,"text":"飛行中の飛行の安全についての運航管理の最終責任は運航管理者にもある。","correct":false,"explain":"最終責任はPIC"},{"n":3,"text":"PICと運航管理者の承認に関して意見の一致を見ない時は、PICが常に優先する。","correct":false,"explain":"安全度の高い意見を採用"},{"n":4,"text":"飛行計画書の運航管理者署名欄に担当セクターと承認日時の記載がなければ、電話口で直接口頭承認をもらってもカンパニークリアランスは成立しない。","correct":true,"explain":"OMS 3.1.3.4.1運航管理者による承認方法(＊PICによる承認は口頭でも良い)\n運航管理者署名欄に担当セクターと承認日時が記載された，飛行計画書の発行をもって運航管理者の承認とする。"}]},{"set":"Y","num":18,"id":"Y18","stem":"飛行中、操縦席を離れる場合の処置について、正しいものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"25000ftまたは7600mを超える場合、運航乗務員は、必要時に直ちに酸素マスクを着用できること","correct":true,"explain":"2025/6文言が改定に合わせて修正されていた"},{"n":2,"text":"高度41,000ftまたは12,500m以上の場合、少なくとも一方のCrewは常時酸素マスクを着用する。","correct":false,"explain":"こえる場合"},{"n":3,"text":"酸素マスクを着用する場合、Oxygen Diluter LeverはNormal位置とする。ただし、国内線においてはNormalの位置としなくてもよい。","correct":true,"explain":""},{"n":4,"text":"操縦室内における一時的な離席であり、ただちに着席できるような場合は、酸素マスクを着用する必要は無い。","correct":true,"explain":""}]},{"set":"Y","num":19,"id":"Y19","stem":"旅客の中に疾病者が発生し、救急車の手配を依頼する場合、少なくとも伝えなければならないとされている事項を全て選べ","type":"multi","qnote":"OMS 9.3.8.1.1.3","options":[{"n":1,"text":"疾病者の氏名、性別、年齢","correct":false,"explain":""},{"n":2,"text":"傷病者数","correct":true,"explain":""},{"n":3,"text":"歩行不可能者数","correct":true,"explain":""},{"n":4,"text":"疾病者の最寄りの出口","correct":false,"explain":""}]},{"set":"Y","num":20,"id":"Y20","stem":"危険物に関する記述のうち、正しいものを全て選べ","type":"multi","qnote":"OM 9.5","options":[{"n":1,"text":"危険物搭載の可否決定は、原則としてPICがその責任において行う。","correct":false,"explain":"空港支店長"},{"n":2,"text":"危険物は貨物室以外に搭載してはならない。","correct":false,"explain":"例外としてPassenger Manualに持込手荷物として定められたもの、また警察官等の拳銃携帯は客室内持込可能。"},{"n":3,"text":"PICが輸送を拒否した場合，PICは機長報告書を提出する。","correct":true,"explain":""},{"n":4,"text":"受託部門は原則として運航乗務員の出頭時刻までに、オペレーションオフィサーに危険物に関する事項を連絡する。","correct":true,"explain":""}]},{"set":"Y","num":21,"id":"Y21","stem":"運航管理者に関する事項について、正しいものをすべて選べ","type":"multi","qnote":"","options":[{"n":1,"text":"運航管理者は技能証明を有していない","correct":true,"explain":""},{"n":2,"text":"航空運送事業の用に供する国土交通省令で定める航空機は、その機長が、法102条1項の本邦航空運送事業者の置く運航管理者の承認を受けなければ、出発し、又はその飛行計画を変更してはならない","correct":true,"explain":""},{"n":3,"text":"法77条の国土交通省令で定める航空機は、最大離陸重量が3700キログラムを超える飛行機及び最大離陸重量が9080キログラムを超える回転翼航空機（次に掲げる航空機を除く。）である。（例外省略）","correct":false,"explain":""},{"n":4,"text":"機長が、法77条の規定に違反して、航空機を出発させ、又は飛行計画を変更したとき、罰則は30万円以下の罰金である","correct":false,"explain":"50万円以下"}]},{"set":"Y","num":22,"id":"Y22","stem":"RNAV STARについて正しいものを全て選べ","type":"multi","qnote":"OM 3.14.5.3.5","options":[{"n":1,"text":"運航の実施に必要な機上装置が正常に作動することを確認する","correct":true,"explain":""},{"n":2,"text":"RNAV経路がチャートと相違ないことをMap Display又はCDUのいずれかで確認する","correct":false,"explain":"Map DisplayおよびCDUにて確認"},{"n":3,"text":"管制の指示によるターミナル空域における経路変更には迅速に対応する","correct":true,"explain":""},{"n":4,"text":"代替のSTARを準備しておく必要はない","correct":false,"explain":"代替のSTARまたは慣性航法装置の正常作動を確認しておく"}]},{"set":"Y","num":23,"id":"Y23","stem":"RVSM運航における機上装置の要件について正しいものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"自動高度制御（AutopilotのALT HOLD機能）システム1式","correct":true,"explain":""},{"n":2,"text":"独立した2系統の高度測定（Altimeter）システム（予備高度計を含む）","correct":false,"explain":"予備高度計は含まない"},{"n":3,"text":"高度監視警報（Altitude AlertingまたはAltitude Advisory）システム1式","correct":true,"explain":""},{"n":4,"text":"トランスポンダ1式（空域によっては必要としない場合がある）","correct":true,"explain":""}]},{"set":"Y","num":24,"id":"Y24","stem":"飛行中、旅客の疾病が発生した場合、機長報告書の提出について正しいものを一つ選べ","type":"single","qnote":"Part.1 RD 5.7.1.1.5急病人：ATB,DIVおよびATCの優先権を要求した場合や救急車を要請した場合は提出","options":[{"n":1,"text":"いかなる場合も必要となる。","correct":false,"explain":""},{"n":2,"text":"軽微な負傷等でPICがその必要がないと判断した場合は必要がない。","correct":true,"explain":""},{"n":3,"text":"目的地の変更や緊急着陸を行った場合のみ必要となる。","correct":false,"explain":""},{"n":4,"text":"医師、看護師の援助があった場合のみ必要となる。","correct":false,"explain":""}]},{"set":"Y","num":25,"id":"Y25","stem":"広域航法について、正しいものを一つ選べ","type":"single","qnote":"","options":[{"n":1,"text":"RAIM予測にてRAIM Holeが予測されていた場合はGPSを必須とするRNAV運航はできない","correct":false,"explain":""},{"n":2,"text":"DME GAPとは飛行経路上においてRNAV1の航法精度を満足するDME電波の組み合わせが受信できない区間をいい、Critical DMEが体はしている場はCritical DMEに係る区間をDME Gapと同様に扱わなくてはならない","correct":true,"explain":""},{"n":3,"text":"機上での性能監視はCockpit内のIndicationにより航法精度の低下および所望のTrackからのずれを認識する能力で、EICAS MessageまたはND上のNavigation Advisory Message＋FMC Alerting Message等が該当する。一方で機上の警報機能は航法精度の低下が閾値を超えた事を乗員に認識させる機能で、NPS（Navigation Performance Scale）またHSIおよびCDUを用いたモニターが該当する","correct":false,"explain":""},{"n":4,"text":"RNAV運航では機上の性能監視および警報機能を提供する機能を必要とする。一方でRNP運航では機上の性能監視および警報機能を提供する機能を必要としない。このため、RadarがOut of Serviceの状況でも運航を継続できる","correct":false,"explain":""}]},{"set":"Z","num":1,"id":"Z1","stem":"機長認定路線審査の位置づけに関する説明として正しいものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"機長の認定は、航空機の型式は限定されない","correct":false,"explain":"施行規則163の2により型式を限定"},{"n":2,"text":"路線審査には、「出発前の確認」に関するものが含まれる","correct":true,"explain":""},{"n":3,"text":"路線審査には、「航空機乗組員及び客室乗務員に対する指揮監督」に関するものが含まれる","correct":true,"explain":""},{"n":4,"text":"路線審査には、「通常状態及び異常状態における航空機の操作および措置」に関するものが含まれる","correct":false,"explain":""}]},{"set":"Z","num":2,"id":"Z2","stem":"指定本邦航空運送事業者の機長であって、運航審査官による審査を受けなければならない者を全て選べ","type":"multi","qnote":"範囲内の機長法７２条5項\n運航審査官の審査を受けるのは航空業務の停止、技能証明の取り消しを受けているもの","options":[{"n":1,"text":"認定を受けている機長で、非類似型式の航空機について認定を受けようとする者","correct":false,"explain":""},{"n":2,"text":"認定を受けている機長で、準類似規程事業者に移籍、出向し認定を受けようとする者","correct":false,"explain":""},{"n":3,"text":"認定を受けている機長で、過去に機長として所属していたことのある会社に移籍、出向し、当時認定を受けていた型式と同一型式の航空機について認定を受けようとする者","correct":false,"explain":""},{"n":4,"text":"長期の病欠により機長認定が失効した者","correct":false,"explain":""}]},{"set":"Z","num":3,"id":"Z3","stem":"安全阻害行為に対する警告書についての記述で正しいものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"禁止命令対象行為に該当する場合は使用できない。","correct":false,"explain":""},{"n":2,"text":"「警告書」の手交がなくても、機内での拘束、警察要請は可能である。","correct":true,"explain":"警告書なくても、機内での拘束、警察待機要請は可能"},{"n":3,"text":"原則、PICへ報告し手交する。（事後報告でも可。）","correct":true,"explain":""},{"n":4,"text":"例え事態を悪化させる可能性があっても、必ず対象旅客、周りの旅客へ聞こえるよう、はっきりとその行為をやめるよう読み上げ手交しなければならない。","correct":false,"explain":""}]},{"set":"Z","num":4,"id":"Z4","stem":"OMに挙げられる、Cabin Briefingで共有すべき情報に該当するものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"発動中の「脅威レベル」等保安情報","correct":true,"explain":"飛行計画および気象情報\n緊急時の業務分担\n保安に関する事項\n操縦室ドアの施錠および開閉の方法\n操縦室と客室間の相互連絡方法\n発動中の「脅威レベル」等保安情報\n(注)「脅威レベル」別の対応内容については，「Security Program」に定められている。当該Programは，OMA-7.4-保安対策基準と脅威レベル【社外秘】参照\n旅客サービス\n注)ベルト着用サイン点灯時の客室乗務員の対応については，OMA-9.3.2-ベルト着用サイン点灯時の客室乗務員の対応参照。\n放射性物質等（注）が搭載される場合は，その搭載位置などの周知。\n(注)｢放射性物質等｣とは，OM-9.5.1.1-一般.1で規定する危険物のうちg項｢放射性物質等｣を指す。\nその他必要事項"},{"n":2,"text":"ベルト着用サイン点灯時の客室乗務員の対応","correct":true,"explain":""},{"n":3,"text":"放射性物質搭載される場合は，その搭載位置などの周知","correct":true,"explain":""},{"n":4,"text":"機内サービスに影響するような機体の不具合","correct":true,"explain":""}]},{"set":"Z","num":5,"id":"Z5","stem":"OJT中にHND、ITM、ICN（仁川）、HKG（香港）を経験し、昇格路線審査をHND-ITMで受ける場合の乗務要件について、正しいものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"機長昇格訓練中の離着陸経験は機長昇格後も一定期間は所定の経験として扱われる。","correct":true,"explain":""},{"n":2,"text":"半年以内にF/OとしてのSPKの着陸経験があっても、HND－SPKはいきなりPICとして乗務することは出来ない。","correct":true,"explain":""},{"n":3,"text":"昇格後すぐHND－HKGにPICとして乗務できる。","correct":false,"explain":""},{"n":4,"text":"昇格後すぐHND－ICNにPICとして乗務できる。","correct":true,"explain":""}]},{"set":"Z","num":6,"id":"Z6","stem":"特別審査、臨時審査、随時審査について正しいものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"随時審査は、機長認定を受けた者について、国土交通大臣が必要と認められた場合におこなわれる。","correct":false,"explain":"随時審査は、当局による特別審査が実施される場合に、事業者によって行われる審査。また、各部長が特に必要と見貯めた場合にも行われ、これに該当するものとして、昇格者全員に半年後に行うエリア審査を行うことにより随時審査をおこなったとみなす。"},{"n":2,"text":"特別審査とは、国土交通大臣が必要と認めた時、運航審査官による定期審査等を行うものである。","correct":true,"explain":"Q-22 4.6.2.1"},{"n":3,"text":"臨時審査は事業者によって行われる審査である。","correct":false,"explain":"国土交通大臣が行う臨時審査と社内臨時審査がある"},{"n":4,"text":"いずれの審査においても、機長認定時に求められるものと同様の知識および能力を有するかどうかについて審査される。","correct":true,"explain":""}]},{"set":"Z","num":7,"id":"Z7","stem":"航空法において機長の権限が直接及ぶ範囲に該当するものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"地上の駐機スポットにおいて、これから機長として乗り組む当該航空機内にて出発準備を行う整備士","correct":false,"explain":""},{"n":2,"text":"当該出発便担当のゲート業務女子地上職員","correct":false,"explain":""},{"n":3,"text":"飛行中、航空機ならびに旅客に危難が生じる恐れがある場合の、当該便利用客の一人である国土交通大臣","correct":true,"explain":"第七十三条の四　機長は、航空機内にある者が、離陸のため当該航空機のすべての乗降口が閉ざされた時から着陸の後降機のためこれらの乗降口のうちいずれかが開かれる時までに、安全阻害行為等をし"},{"n":4,"text":"出発前の駐機スポットにおいて、全旅客搭乗完了前に、既に事前予約座席に着座している旅客が、尋常でない悪臭を放っていて、周りの旅客からクレームの上がっている当該旅客","correct":false,"explain":""}]},{"set":"Z","num":8,"id":"Z8","stem":"Observer Seat使用者に対して行うSafety Instructionに含まれるものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"Life Vestの位置、使用方法","correct":true,"explain":""},{"n":2,"text":"禁煙","correct":true,"explain":""},{"n":3,"text":"操縦室ドアの開閉方法","correct":false,"explain":""},{"n":4,"text":"ショルダーハーネスの使用方法","correct":true,"explain":""}]},{"set":"Z","num":9,"id":"Z9","stem":"整備について、正しいものをすべて選べ","type":"multi","qnote":"","options":[{"n":1,"text":"搭載用航空日誌にある確認主任者の署名は、法確認の証である","correct":true,"explain":""},{"n":2,"text":"OMSでその他の飛行場として定める空港には、当該型式確認主任者は配置されていない","correct":true,"explain":""},{"n":3,"text":"OMSで定める当該航空機の世紀飛行場以外へのDiversion後、再出発に際してMELを適用する場合、いかなる場合も当該型式確認主任者による整備処置が必要である","correct":false,"explain":""},{"n":4,"text":"日本航空の定期整備区分にはA,J,C,K,Mがあるが、型式によっては全区分の定期整備が行われるわけではない","correct":true,"explain":""}]},{"set":"Z","num":10,"id":"Z10","stem":"安全阻害行為に関する機長の権限のうち、正しいものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"警告書を発行したにも関わらず、その行為を止めないような者にかかりきりの対応が余儀なくされた場合は命令書の発行も可能である。","correct":true,"explain":""},{"n":2,"text":"ベルトサイン点灯中、客室乗務員が離席出来ないことを認識しながら、故意に禁止命令対象行為をするような悪質な場合には、初めから命令書を発行することが出来る。","correct":true,"explain":"1-06SD 9.3.1.1.3.7命令書はPICの承諾後が原則だが、この条件では命令書が出せる。また9.3.1.1.3.1のフローチャート　初期対応内でも書かれているが、これにより行為が抑止されれば報告書の提出は不要となっている。CAEにの要件には命令書の発行あるので、反するかも、、、"},{"n":3,"text":"拘束すべき者が存在する時、その為の援助を依頼することは出来るが命令することは出来ない。","correct":true,"explain":""},{"n":4,"text":"到着後、降機中に機内で乱暴行為を働いた者が居ても警告書を発行することは出来ない。","correct":false,"explain":""}]},{"set":"Z","num":11,"id":"Z11","stem":"運航管理者に関する事項について、正しいものをすべて選べ","type":"multi","qnote":"","options":[{"n":1,"text":"運航管理者は技能証明を有していない","correct":true,"explain":""},{"n":2,"text":"航空運送事業の用に供する国土交通省令で定める航空機は、その機長が、法102条1項の本邦航空運送事業者の置く運航管理者の承認を受けなければ、出発し、又はその飛行計画を変更してはならない","correct":true,"explain":""},{"n":3,"text":"法77条の国土交通省令で定める航空機は、最大離陸重量が3700キログラムを超える飛行機及び最大離陸重量が9080キログラムを超える回転翼航空機（次に掲げる航空機を除く。）である。（例外省略）","correct":false,"explain":""},{"n":4,"text":"機長が、法77条の規定に違反して、航空機を出発させ、又は飛行計画を変更したとき、罰則は30万円以下の罰金である","correct":false,"explain":"50万円以下"}]},{"set":"Z","num":12,"id":"Z12","stem":"燃料の使用に関する記述について、正しいものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"「Minimum Fuel」は，緊急事態や管制上の優先権の要求を意味するものではない。","correct":true,"explain":""},{"n":2,"text":"「Minimum Fuel」を宣言した場合、残存燃料を分単位で通報する。","correct":false,"explain":"mayday fuelの話"},{"n":3,"text":"着陸を決意した飛行場における着陸後の残存燃料量が、Final Reserve Fuel以下なる可能性があると判断した場合は、管制上の優先権を要求すべく管制機関に緊急事態の宣言を行う。","correct":false,"explain":"(Minimum Fuel)Final RSV Fuel未満になる可能性がある、　(MAYDAY Fuel)Final RSV Fuel未満になると判断、minimum fuelは管制上の優先権は発生しない"},{"n":4,"text":"燃料欠乏の緊急事態の宣言には、「MAYDAY,MAYDAY,MAYDAY FUEL」の用語を用いる","correct":true,"explain":""}]},{"set":"Z","num":13,"id":"Z13","stem":"Bomb Threatに関する記述の内、正しいものを全て選べ","type":"multi","qnote":"OM 7.7.2","options":[{"n":1,"text":"離陸後、信憑性の高い爆発物脅迫を受けた場合は、状況の許す限り飛行計画を変更し、与圧を解除して10000ft以下に緊急降下する。","correct":false,"explain":"緊急降下ではない"},{"n":2,"text":"離陸後、信憑性の高い爆発物脅迫を受けた場合は、時間的にもっとも近い、安全に着陸できる飛行場に着陸する。","correct":true,"explain":""},{"n":3,"text":"気圧連動式爆弾の通報があった時で、脅迫内容で高度が指定されていない場合には、高度を変更せずに機内捜索に入る。","correct":true,"explain":""},{"n":4,"text":"機内捜索中は、旅客に座席ベルトを着用させる。","correct":true,"explain":""}]},{"set":"Z","num":14,"id":"Z14","stem":"機長の報告が求められる内容に該当するものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"Weight&Balance Dataの重大な誤り","correct":true,"explain":""},{"n":2,"text":"GPWSの警報（Pull Up）に基づく回避操作","correct":true,"explain":""},{"n":3,"text":"悪天候により目的地を変更した場合、又は出発地に引き返した場合","correct":false,"explain":"離陸後のATB/DVTで提出が求められるものは、機材の不具合、乗員の異常による場合"},{"n":4,"text":"機内における旅客の電子機器の使用による航法機器等への影響が疑われた場合","correct":true,"explain":""}]},{"set":"Z","num":15,"id":"Z15","stem":"機長報告の取り扱いについて、正しいものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"各型式乗員部長は，提出された機長報告書の内容を確認し，処理方針について決定する。","correct":true,"explain":""},{"n":2,"text":"受理された報告の目的に応じて、それぞれ本部内担当部署で必要な処理が行われる","correct":true,"explain":""},{"n":3,"text":"e-Reportは社内報告であり，法に基づいてPIC名で関係当局へ報告する必要があるものについては，別途報告書を作成の上当局に提出する。","correct":true,"explain":""},{"n":4,"text":"異常接近報告書は，関係当局が設定した書式であり，原則としてそのまま報告される。","correct":true,"explain":""}]},{"set":"Z","num":16,"id":"Z16","stem":"最近の飛行経験について、正しいものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"夜間における離着陸を行うには、定められた離着陸経験のうち一回は必ず夜間で行われなくてはならない。","correct":false,"explain":"規則158条"},{"n":2,"text":"離陸、着陸の経験は航空運送事業の用に供する場合についてのみ求められる。","correct":true,"explain":""},{"n":3,"text":"操縦する日からさかのぼって90日までの間に離陸および着陸を3回以上行った経験を有しなくてはならない。","correct":true,"explain":""},{"n":4,"text":"離陸、着陸の経験は、運航に従事しようとする航空機と同じ型式又は当該型式と類似の型式のものでなくてはならない。","correct":true,"explain":""}]},{"set":"Z","num":17,"id":"Z17","stem":"安全阻害行為について、正しいものをすべて選べ","type":"multi","qnote":"","options":[{"n":1,"text":"安全阻害行為等とは、当該航空機の安全を害し、当該航空機内にあるその者以外の者若しくは財産に危害を及ぼし、当該航空機内の秩序を乱し、又は当該航空機内の規律に違反する行為をいう","correct":true,"explain":""},{"n":2,"text":"航空機内にある者は、機長の命令又は承認に基づき、機長が法73条の4第1項の措置をとることに対し必要な援助を行うことができる","correct":false,"explain":"要請又は承認"},{"n":3,"text":"機長は、航空機を着陸させる場合において、法73条の4第1項の規定に基づき拘束している者があるとき、又は同項の規定に基づき降機させようとする者があるときは、できる限り着陸前に、拘束又は降機の理由を示してその旨を着陸地の最寄りの航空交通管制機関に連絡しなければならない","correct":true,"explain":""},{"n":4,"text":"機長は、法73条の4第1項の規定に基づき拘束している場合において、航空機を着陸させたときは、その者を引き続き拘束したまま当該航空機を離陸させてはならない","correct":false,"explain":""}]},{"set":"Z","num":18,"id":"Z18","stem":"操縦室立ち入りが許可される者を全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"乗員サポート部長の許可を得，かつ，PICが許可したObserver Seat使用者","correct":true,"explain":""},{"n":2,"text":"地上停留中，会社業務上立入りが必要な者","correct":true,"explain":""},{"n":3,"text":"航空法および電波法に定める公務遂行中の関係官庁の検査官等（外国領域を飛行する場合，当該国関係官庁の検査官等を含む｡）ならびに認定点検事業者の点検員","correct":true,"explain":""},{"n":4,"text":"急病人が発生した場合における医療関係者等,緊急時においてPICが業務遂行上協力を求める者","correct":true,"explain":""}]},{"set":"Z","num":19,"id":"Z19","stem":"危険物に関する事項について、正しいものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"警察官等の拳銃携帯がある場合、Company RadioおよびACARSによりPICに通知される。","correct":false,"explain":"原則、通知にCompany RadioやACARSは使用しない"},{"n":2,"text":"警察官等の拳銃携帯がある場合、旅客担当部門は所定の書式に必要事項を記載の上、第1片を先任客室乗務員へ提出し、第2片を旅客担当部門で保管する。","correct":false,"explain":""},{"n":3,"text":"ACARS S/L通知書の運用対象空港においては、原則出発の10分前までに各支店の国内貨物部門からACARS Free TextによるS/L通知書がUplinkされる。","correct":true,"explain":""},{"n":4,"text":"ACARS S/L通知書について、「Accept」または「Reject」を返信するが、この返信はPICの署名の代わりであるので必ずPICが返信すること。なおACARSの操作は代行させてもよい。","correct":true,"explain":""}]},{"set":"Z","num":20,"id":"Z20","stem":"下記のうち、機種別標準搭乗数で制限を受ける条件付運送旅客について、正しいものをすべて選べ","type":"multi","qnote":"","options":[{"n":1,"text":"ストレッチャー旅客","correct":true,"explain":""},{"n":2,"text":"付添人を伴う全盲旅客","correct":false,"explain":""},{"n":3,"text":"歩行困難旅客","correct":false,"explain":""},{"n":4,"text":"聴導犬を伴う聴覚障害旅客","correct":false,"explain":""}]},{"set":"Z","num":21,"id":"Z21","stem":"Critical Phaseであっても、客室乗務員が安全のために運航乗務員に連絡するべき、代表的な事象として挙げられているものを全て選べ","type":"multi","qnote":"","options":[{"n":1,"text":"急病人が発生し，緊急に処置する必要がある場合","correct":true,"explain":""},{"n":2,"text":"離陸前に客室内の準備が出来ていない場合","correct":true,"explain":""},{"n":3,"text":"不審物の発見，安全阻害行為等が発生した場合","correct":true,"explain":""},{"n":4,"text":"トイレの使用など人道上の配慮が必要な場合","correct":false,"explain":""}]},{"set":"Z","num":22,"id":"Z22","stem":"RVSM空域の飛行に関する記述のうち、正しいものを全て選べ","type":"multi","qnote":"OM 3.8","options":[{"n":1,"text":"承認高度に達する毎に、Over Shootが200ft以内であることを確認する。","correct":false,"explain":"over/underは150ft。200ftはクロスチェック時に"},{"n":2,"text":"承認高度に達する毎に、全ての高度計が標準大気圧(29.92)に規正されていることを確認する","correct":true,"explain":""},{"n":3,"text":"TCAS RAによる逸脱を除いて、300ft以上の高度逸脱があった場合は機長報告を実施する","correct":false,"explain":"TCASによる除外規程はない。いかなる場合でも提出"},{"n":4,"text":"MOD Turbulenceに遭遇したら、RVSM運航が出来ないことを通報する","correct":false,"explain":"中程度を超えるタービュランスとの遭遇を通報"}]},{"set":"Z","num":23,"id":"Z23","stem":"危険物に関する記述のうち、正しいものを全て選","type":"multi","qnote":"","options":[{"n":1,"text":"RMDとは毒物のことである","correct":false,"explain":""},{"n":2,"text":"磁性物質は前方貨物室に搭載してはならない","correct":true,"explain":""},{"n":3,"text":"旅客部門受託の危険物は機長への通知および機長の署名がすべて必要である","correct":false,"explain":""},{"n":4,"text":"動物の受託に関しては、ACARSによるS/L通知書の送信は行わない","correct":false,"explain":""}]},{"set":"Z","num":24,"id":"Z24","stem":"RAIM Outの時間帯にRNAV SIDを飛行することが出来るか？該当するものを一つ選べ","type":"single","qnote":"","options":[{"n":1,"text":"停波等で使用できないDMEがあっても、DME Gapが14nmを超えなければ可能","correct":true,"explain":""},{"n":2,"text":"DME Gapの値に関係なく可能","correct":false,"explain":""},{"n":3,"text":"Intersection Departureを行わなければ可能","correct":false,"explain":""},{"n":4,"text":"出来ない","correct":false,"explain":""}]},{"set":"Z","num":25,"id":"Z25","stem":"機長の認定について、正しいものを1つ選べ","type":"single","qnote":"","options":[{"n":1,"text":"査察操縦士の指名路線審査と機長認定路線審査が同時に実施された場合、機長認定は法72条5項による認定となる","correct":false,"explain":"法72条1項？"},{"n":2,"text":"査察操縦士の指名路線審査と機長認定に係る定期路線審査が同時に実施された場合、定期路線審査は法72条2項の審査となる","correct":true,"explain":""},{"n":3,"text":"査察操縦士の指名定期路線審査と機長認定に係る定期路線審査が同時に実施された場合、定期路線審査は法72条8項による特別審査となる","correct":false,"explain":"法72条2項？"},{"n":4,"text":"社内随時審査に不合格となった場合、機長認定は失効する","correct":false,"explain":"QM6.6.2"}]}];</script>
+<script>
+(function(){
+"use strict";
+var KEY="kcfm_v1";
+var CIRC=["","①","②","③","④","⑤"];
+var app=document.getElementById("app");
+function esc(s){return (s==null?"":String(s)).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];});}
+function nl2br(s){return esc(s).replace(/\n/g,"<br>");}
+
+// ---- indexes ----
+var qIndex={}, maruIndex={};
+DATA.forEach(function(q){
+  qIndex[q.set+"."+q.num]=q;
+  q.options.forEach(function(o){
+    maruIndex[q.set+"."+q.num+"."+o.n]={set:q.set,num:q.num,optn:o.n,stem:q.stem,qnote:q.qnote,
+      statement:o.text,correct:o.correct,explain:o.explain,type:q.type};
+  });
+});
+var SETS=["W","X","Y","Z"];
+
+// ---- state ----
+function def(){return {set:"W",mode:"maru",shuffle:true,prog:{},wrong:{},seen:{},seenQ:{}};}
+var S;
+try{S=JSON.parse(localStorage.getItem(KEY))||def();}catch(e){S=def();}
+if(!S.prog)S.prog={}; if(!S.wrong)S.wrong={}; if(!S.seen)S.seen={}; if(!S.seenQ)S.seenQ={};
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+
+var session=null; // {items:[keys], idx, results:{key:bool}, review, pick, pk, shuffle, origItems}
+
+// ---- item builders ----
+function maruKeys(set){var ks=[];DATA.forEach(function(q){if(set==="ALL"||q.set===set)q.options.forEach(function(o){ks.push(q.set+"."+q.num+"."+o.n);});});return ks;}
+function qKeys(set){var ks=[];DATA.forEach(function(q){if(set==="ALL"||q.set===set)ks.push(q.set+"."+q.num);});return ks;}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function progKey(set,mode){return set+"_"+mode;}
+function idxOf(key){return S.mode==="maru"?maruIndex[key]:qIndex[key];}
+
+// Global per-item record (key->bool latest correctness) so the home cards stay
+// consistent between a single set and the "全部" view (they share item keys).
+function recordSeen(key,mode,good){(mode==="maru"?S.seen:S.seenQ)[key]=good;}
+
+function setStats(set){ // mode-aware, aggregated from the global seen record
+  var mode=S.mode;
+  var keys=(mode==="maru"?maruKeys(set):qKeys(set));
+  var rec=(mode==="maru"?S.seen:S.seenQ);
+  var done=0,ok=0;
+  keys.forEach(function(k){if(rec.hasOwnProperty(k)){done++;if(rec[k])ok++;}});
+  return {total:keys.length,done:done,ok:ok,unit:(mode==="maru"?"択":"問")};
+}
+function wrongKeysFor(mode){var r=[];for(var k in S.wrong){if(S.wrong[k]===mode){if(mode==="maru"?maruIndex[k]:qIndex[k])r.push(k);}}return r;}
+function wrongCount(mode){return wrongKeysFor(mode).length;}
+function markWrong(key,mode,bad){if(bad){S.wrong[key]=mode;}else{if(S.wrong[key])delete S.wrong[key];} save();}
+
+// =================== HOME ===================
+function home(){
+  session=null;
+  var totalDone=0,totalAll=0;
+  var setCards=SETS.map(function(s){
+    var st=setStats(s); totalDone+=st.done; totalAll+=st.total;
+    var pc=st.done?Math.round(st.ok/st.done*100):0;
+    var pct=Math.round(st.done/st.total*100);
+    return '<button class="setcard" data-set="'+s+'">'
+      +'<div class="nm">セット '+s+' <span class="q">25問</span></div>'
+      +'<div class="bar"><i style="width:'+pct+'%"></i></div>'
+      +'<div class="meta"><span>'+st.done+' / '+st.total+' '+st.unit+'</span><span>'+(st.done?('正答率 '+pc+'%'):'未着手')+'</span></div>'
+      +'</button>';
+  }).join("");
+  var allSt=setStats("ALL");
+  var allCard='<button class="setcard full" data-set="ALL">'
+    +'<div class="nm">全部まとめて <span class="q">100問 / 400択</span></div>'
+    +'<div class="bar"><i style="width:'+Math.round(allSt.done/allSt.total*100)+'%"></i></div>'
+    +'<div class="meta"><span>'+allSt.done+' / '+allSt.total+' '+allSt.unit+'</span><span>'+(allSt.done?('正答率 '+Math.round(allSt.ok/allSt.done*100)+'%'):'未着手')+'</span></div>'
+    +'</button>';
+  var wc=wrongCount(S.mode);
+  app.innerHTML=
+    '<div class="hero"><h1>KCFM ◯✖問題集</h1>'
+    +'<p>W・X・Y・Z／全100問・400択　<span class="muted">（2025/12版データ）</span></p></div>'
+    +'<div class="section-label">出題形式</div>'
+    +'<div class="seg" id="modeseg">'
+    +'<button data-mode="maru" class="'+(S.mode==="maru"?"on":"")+'">◯✖モード<br><span class="tiny" style="font-weight:500">1文ずつ・本番形式</span></button>'
+    +'<button data-mode="q" class="'+(S.mode==="q"?"on":"")+'">問題モード<br><span class="tiny" style="font-weight:500">設問＋選択肢4つ</span></button>'
+    +'</div>'
+    +'<div class="row" style="margin-top:10px">'
+    +'<button class="toggle '+(S.shuffle?"on":"")+'" id="shuf">🔀 シャッフル '+(S.shuffle?"ON":"OFF")+'</button>'
+    +'</div>'
+    +'<div class="section-label">セットを選んで開始</div>'
+    +'<div class="grid">'+setCards+allCard+'</div>'
+    +'<div class="section-label">復習・管理</div>'
+    +'<button class="bigbtn ghost" id="reviewbtn" '+(wc?'':'disabled')+'>🔁 間違えた問題だけ復習'+(wc?(' （'+wc+'問）'):' （なし）')+'</button>'
+    +'<button class="bigbtn warn" id="resetbtn" style="margin-top:10px">記録をリセット</button>'
+    +'<div class="note">◯✖モードは本番の Google フォーム（1問ずつ◯×）と同じ形式です。解答・解説は配布シート（2025/12版）に基づきます。"教官に要確認" 等の注記がある問題は解説に表示されます。<br>進捗はこの端末のブラウザに自動保存され、続きから再開できます。</div>';
+  // bind
+  Array.prototype.forEach.call(document.querySelectorAll("#modeseg button"),function(b){b.onclick=function(){S.mode=b.getAttribute("data-mode");save();home();};});
+  document.getElementById("shuf").onclick=function(){S.shuffle=!S.shuffle;save();home();};
+  Array.prototype.forEach.call(document.querySelectorAll(".setcard"),function(b){b.onclick=function(){start(b.getAttribute("data-set"),false);};});
+  var rb=document.getElementById("reviewbtn"); if(rb&&wc)rb.onclick=function(){start(S.set,true);};
+  document.getElementById("resetbtn").onclick=function(){if(confirm("全セットの解答記録・間違いリストを消去します。よろしいですか？")){S.prog={};S.wrong={};S.seen={};S.seenQ={};save();home();}};
+}
+
+// =================== START / RESUME ===================
+function startReview(keys){ // build an in-memory review session from explicit keys
+  keys=keys.filter(function(k){return idxOf(k);});
+  if(!keys.length){alert("復習する問題がありません。");home();return;}
+  var order=S.shuffle?shuffle(keys):keys.slice();
+  session={items:order,origItems:order.slice(),idx:0,results:{},review:true,
+           shuffle:S.shuffle,pick:(S.mode==="q"?{}:null)};
+  render();
+}
+function start(set,review){
+  S.set=set; save();
+  var mode=S.mode;
+  if(review){startReview(wrongKeysFor(mode));return;}
+  var pk=progKey(set,mode);
+  var p=S.prog[pk];
+  var freshKeys=(mode==="maru"?maruKeys(set):qKeys(set));
+  // a saved session is resumable only if it lines up with the current data
+  var valid=p&&p.order&&p.order.length===freshKeys.length&&p.order.every(idxOf);
+  var done=valid&&p.results?Object.keys(p.results).length:0;
+  if(valid&&done>0&&done<freshKeys.length){
+    if(confirm("セット"+(set==="ALL"?"全部":set)+"（"+(mode==="maru"?"◯✖":"問題")+"）の続き（解答済み "+done+" ／ 全"+freshKeys.length+"）から再開しますか？\n「キャンセル」で最初から。")){
+      var idx=0; while(idx<p.order.length&&p.results.hasOwnProperty(p.order[idx]))idx++;
+      session={items:p.order,idx:idx,results:p.results,review:false,pk:pk,
+               shuffle:p.shuffle!==undefined?p.shuffle:S.shuffle,pick:(mode==="q"?{}:null)};
+      render();return;
+    }
+  }
+  var order=S.shuffle?shuffle(freshKeys):freshKeys.slice();
+  S.prog[pk]={order:order,idx:0,results:{},shuffle:S.shuffle}; save();
+  session={items:order,idx:0,results:{},review:false,pk:pk,shuffle:S.shuffle,pick:(mode==="q"?{}:null)};
+  render();
+}
+
+function persistProg(){
+  if(session.review||!session.pk)return;
+  S.prog[session.pk]={order:session.items,idx:session.idx,results:session.results,shuffle:session.shuffle};
+  save();
+}
+
+// =================== RENDER CARD ===================
+function render(){
+  if(session.idx>=session.items.length){return summary();}
+  if(S.mode==="maru")renderMaru();else renderQ();
+}
+
+function topBar(){
+  var n=session.items.length, i=session.idx;
+  var ok=0,ans=0; for(var k in session.results){ans++;if(session.results[k])ok++;}
+  var label=session.review?"間違い復習":("セット "+(S.set==="ALL"?"全部":S.set));
+  var modeL=S.mode==="maru"?"◯✖モード":"問題モード";
+  return '<div class="top">'
+    +'<button class="iconbtn" id="homebtn">‹</button>'
+    +'<div class="topmid"><div class="t1">'+esc(label)+'</div><div class="t2">'+modeL+(session.shuffle?" ・🔀":"")+'</div></div>'
+    +'<div class="scorepill">正答 '+ok+'/'+ans+'</div></div>'
+    +'<div class="pbar"><i style="width:'+Math.round(i/n*100)+'%"></i></div>'
+    +'<div class="badge"><span class="pill">'+(i+1)+' / '+n+'</span>';
+}
+function bindHome(){document.getElementById("homebtn").onclick=function(){persistProg();home();};}
+
+function renderMaru(){
+  var key=session.items[session.idx], it=maruIndex[key];
+  var answered=session.results.hasOwnProperty(key);
+  var setlabel=it.set+" Q"+it.num;
+  var h=topBar()
+    +'<span class="pill">'+esc(setlabel)+'</span>'
+    +'<span class="pill">選択肢 '+CIRC[it.optn]+'</span></div>'
+    +'<div class="stem fadein"><span class="lab">設問</span>'+nl2br(it.stem)+'</div>'
+    +'<div class="statement fadein"><span class="onum">'+CIRC[it.optn]+'</span>'+nl2br(it.statement)+'</div>';
+  if(!answered){
+    h+='<div class="maru"><button id="bO"><span class="big">○</span>正しい</button>'
+      +'<button id="bX"><span class="big">✕</span>誤り</button></div>';
+    app.innerHTML=h; bindHome();
+    document.getElementById("bO").onclick=function(){answerMaru(key,true);};
+    document.getElementById("bX").onclick=function(){answerMaru(key,false);};
+  }else{
+    var picked=session.pick;
+    var correct=it.correct, good=session.results[key];
+    h+='<div class="maru answered">'
+      +'<button disabled class="'+(picked===true?(good?"pickO":"pickX"):"")+'" style="opacity:'+(picked===true?1:.45)+'"><span class="big">○</span>正しい</button>'
+      +'<button disabled class="'+(picked===false?(good?"pickO":"pickX"):"")+'" style="opacity:'+(picked===false?1:.45)+'"><span class="big">✕</span>誤り</button></div>';
+    h+=feedback(good, correct?"この記述は【正しい】":"この記述は【誤り】", it.explain, it.qnote);
+    h+=footerNext();
+    app.innerHTML=h; bindHome(); bindNext();
+  }
+}
+function answerMaru(key,pick){
+  var it=maruIndex[key]; var good=(pick===it.correct);
+  session.results[key]=good; session.pick=pick;
+  recordSeen(key,"maru",good); markWrong(key,"maru",!good); persistProg();
+  renderMaru();
+}
+
+function renderQ(){
+  var key=session.items[session.idx], q=qIndex[key];
+  var graded=session.results.hasOwnProperty(key);
+  var typ=q.type==="single"?"正しいものを1つ":"正しいものを全て";
+  var h=topBar()+'<span class="pill">'+esc(q.set+" Q"+q.num)+'</span><span class="typ">'+typ+'選ぶ</span></div>'
+    +'<div class="statement fadein" style="font-size:16px;font-weight:700">'+nl2br(q.stem)+'</div>';
+  if(q.qnote && graded){/*shown in feedback*/}
+  h+='<div class="opts">';
+  if(!session.pick)session.pick={};
+  q.options.forEach(function(o){
+    var sel=session.pick&&session.pick[o.n];
+    var cls="opt"; var res="";
+    if(graded){
+      if(o.correct){cls+=" correct";res='<span class="res" style="color:var(--ok)">○</span>';}
+      else if(sel){cls+=" wrong";res='<span class="res" style="color:var(--ng)">✕</span>';}
+      if(sel&&!o.correct){}
+    }else if(sel){cls+=" sel";}
+    h+='<button class="'+cls+'" data-n="'+o.n+'" '+(graded?"disabled":"")+'>'
+      +'<span class="on">'+(sel?(graded&&!o.correct?"✕":(graded?"○":"✓")):o.n)+'</span>'
+      +'<span>'+nl2br(o.text)+'</span>'+res+'</button>';
+  });
+  h+='</div>';
+  if(graded){
+    var good=session.results[key];
+    var ans=q.options.filter(function(o){return o.correct;}).map(function(o){return CIRC[o.n];}).join("");
+    var fb='<div class="fb '+(good?"ok":"ng")+'"><div class="hd">'+(good?"○ 正解":"✕ 不正解")+'</div>'
+      +'<div class="ans">正しい選択肢： <b>'+(ans||"なし")+'</b></div></div>';
+    // per-option explanations
+    var ex="";
+    q.options.forEach(function(o){
+      if(o.explain){ex+='<div class="expl"><span class="lab">'+CIRC[o.n]+' '+(o.correct?"◯":"✕")+' の解説</span><div class="body">'+nl2br(o.explain)+'</div></div>';}
+    });
+    if(q.qnote)ex+='<div class="expl"><span class="lab">設問の補足</span><div class="body">'+nl2br(q.qnote)+'</div></div>';
+    h+=fb+ex+footerNext();
+    app.innerHTML=h; bindHome(); bindNext();
+  }else{
+    if(q.type!=="single"){h+='<div class="hint">※「全て選べ」：正しい選択肢をすべてタップ。正しいものが無ければ何も選ばず「答え合わせ」。</div>';}
+    h+='<div class="footer"><button class="check" id="checkbtn">答え合わせ</button></div>';
+    app.innerHTML=h; bindHome();
+    function anySel(){return Object.keys(session.pick).some(function(k){return session.pick[k];});}
+    // single-select must pick one; multi may legitimately pick none (all-false answers)
+    function refreshCheck(){var cb=document.getElementById("checkbtn");cb.disabled=(q.type==="single"&&!anySel());}
+    Array.prototype.forEach.call(document.querySelectorAll(".opt"),function(b){
+      b.onclick=function(){
+        var n=+b.getAttribute("data-n");
+        if(q.type==="single"){session.pick={};session.pick[n]=true;
+          Array.prototype.forEach.call(document.querySelectorAll(".opt"),function(x){
+            var on=x.querySelector(".on"); var xn=+x.getAttribute("data-n");
+            if(xn===n){x.classList.add("sel");}else{x.classList.remove("sel");}
+            on.textContent=(xn===n?"✓":xn);
+          });
+        }else{
+          session.pick[n]=!session.pick[n];
+          b.classList.toggle("sel",!!session.pick[n]);
+          b.querySelector(".on").textContent=(session.pick[n]?"✓":n);
+        }
+        refreshCheck();
+      };
+    });
+    refreshCheck();
+    document.getElementById("checkbtn").onclick=function(){gradeQ(key,q);};
+  }
+}
+function gradeQ(key,q){
+  var good=q.options.every(function(o){return !!o.correct===!!(session.pick&&session.pick[o.n]);});
+  session.results[key]=good; recordSeen(key,"q",good); markWrong(key,"q",!good); persistProg();
+  renderQ();
+}
+
+function feedback(good,ansline,explain,qnote){
+  var h='<div class="fb '+(good?"ok":"ng")+'"><div class="hd">'+(good?"○ 正解":"✕ 不正解")+'</div>'
+    +'<div class="ans">'+esc(ansline)+'</div></div>';
+  if(explain){h+='<div class="expl"><span class="lab">解説・根拠</span><div class="body">'+nl2br(explain)+'</div></div>';}
+  if(qnote){h+='<div class="expl"><span class="lab">設問の補足</span><div class="body">'+nl2br(qnote)+'</div></div>';}
+  return h;
+}
+function footerNext(){
+  var last=session.idx>=session.items.length-1;
+  return '<div class="footer"><button class="next" id="nextbtn">'+(last?"結果を見る":"次へ ›")+'</button></div>';
+}
+function bindNext(){document.getElementById("nextbtn").onclick=function(){session.idx++;session.pick=(S.mode==="q"?{}:null);persistProg();render();};}
+
+// =================== SUMMARY ===================
+function summary(){
+  var n=session.items.length,ok=0; for(var k in session.results){if(session.results[k])ok++;}
+  var ans=Object.keys(session.results).length;
+  var pc=ans?Math.round(ok/ans*100):0;
+  var wrong=ans-ok;
+  if(!session.review&&session.pk){S.prog[session.pk].idx=session.items.length;save();}
+  app.innerHTML='<div class="top"><button class="iconbtn" id="homebtn">‹</button>'
+    +'<div class="topmid"><div class="t1">おつかれさまでした</div><div class="t2">'+(session.review?"間違い復習":("セット "+(S.set==="ALL"?"全部":S.set)))+'</div></div></div>'
+    +'<div class="sumc fadein"><div class="pc" style="color:'+(pc>=80?"var(--ok)":pc>=60?"var(--warn)":"var(--ng)")+'">'+pc+'%</div>'
+    +'<div class="sub">'+ans+'問中 '+ok+'問 正解</div>'
+    +'<div class="statline"><div><b style="color:var(--ok)">'+ok+'</b>正解</div><div><b style="color:var(--ng)">'+wrong+'</b>不正解</div></div></div>'
+    +(wrong?'<button class="bigbtn" id="rev">🔁 間違えた問題だけやり直す（'+wrong+'）</button>':'')
+    +'<button class="bigbtn ghost" id="again" style="margin-top:'+(wrong?10:14)+'px">もう一度（最初から）</button>'
+    +'<button class="bigbtn ghost" id="tohome" style="margin-top:10px">ホームへ</button>';
+  document.getElementById("homebtn").onclick=home;
+  document.getElementById("tohome").onclick=home;
+  var origItems=session.origItems;
+  document.getElementById("again").onclick=function(){
+    if(session.review){startReview((origItems||session.items).slice());}
+    else{var pk=session.pk;if(pk){delete S.prog[pk];}save();start(S.set,false);}
+  };
+  var rv=document.getElementById("rev");
+  if(rv)rv.onclick=function(){
+    var bad=[];for(var k in session.results){if(!session.results[k])bad.push(k);}
+    startReview(bad);
+  };
+}
+
+home();
+})();
+</script>
+</body>
+</html>
